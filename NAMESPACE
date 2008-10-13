@@ -1,0 +1,10 @@
+useDynLib(mixer)
+import(methods)
+export(mixer)
+export(Gplot)
+export(plot.mixer)
+export(graph.affiliation)
+exportClasses(spmgraph)
+exportMethods(initialize,getEdges, getAdjacencyMatrix)
+
+

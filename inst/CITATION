@@ -1,0 +1,20 @@
+## -*- R -*-
+citHeader("To cite the R package 'mixer' in publications use:")
+
+citEntry(entry  = "unpublished",
+        title  = "Random graph clustering via  Erdös Renyi Mixture",
+        author = personList(
+                person(first="Christophe", last="Ambroise",
+                       email="christophe.ambroise@genopole.cnrs.fr"),
+                person(first="Mark", last="Hoebeke",
+                       email="Mark.Hoebeke@jouy.inra.fr"),
+                person(first="Vincent", last="Miele",
+                       email="miele@biomserv.univ-lyon1.fr"),
+               person(first="Hugo", last="Zanghi",	
+                       email="hugo.zanghi@exalead.com")	),
+        year = 2008,
+        textVersion = paste(
+        "Ambroise, C., Hoebeke, M., Miele, V. and Zanghi, H. (2008) ",
+        "Random graph clustering via  Erdös Renyi Mixture",
+        "unpublished")
+        )
