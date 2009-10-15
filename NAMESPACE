@@ -1,10 +1,9 @@
-useDynLib(mixer)
-import(methods)
 export(mixer)
-export(Gplot)
-export(plot.mixer)
 export(graph.affiliation)
-exportClasses(spmgraph)
-exportMethods(initialize,getEdges, getAdjacencyMatrix)
-
+export(setSeed)
+export(getModel)
+export(getModel.mixer)
+S3method(plot, mixer)
+S3method(getModel, mixer)
+useDynLib(mixer)
 

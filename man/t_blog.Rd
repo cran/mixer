@@ -11,18 +11,19 @@ between RTGI SAS and Exalead and aims at analyzing the French presidential campa
 }
 \usage{data(blog)}
 \format{
- 196 political blogs described by their political origin and connections. \cr
- There are 2 items in the list blog
+ 196 political blogs described by their political origin and
+ connections. There are 2 items in the list blog:
+ 
  \describe{
-  \item{links}{ Adjacency matrix describing if there exist an
-  hyperlink between two blog}
-  \item{politicalParty}{ political group of the blogs}
+  \item{links}{adjacency matrix describing if there exist an
+  hyperlink between two blogs.}
+  \item{politicalParty}{ political group of the blogs.}
 }
 }
 \details{
 In this data set, nodes represent hostnames (a hostname contains a set of pages) and edges
 represent hyperlinks between different hostnames. If several links exist between two different
-hostnames, we collapse them into a single one. Note that intra domain links can be considered if
+hostnames, they were collapsed into a single one. Note that intra domain links can be considered if
 hostnames are not identical. Finally, in this experimentation we consider that edges are not
 oriented which is not realistic but which does not affect the interpretation of the groups. This network
 presents an interesting communities organization due to the existence of several political parties and

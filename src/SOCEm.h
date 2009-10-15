@@ -61,7 +61,7 @@ namespace ermg {
       if (_curr_i<_n)
 	_ponderate = 1.;
       else
-	_ponderate = 1./( 1 + pow(double(_curr_i)/_n, (2*log(10))/log(double(_em_nitermax))) );     
+	_ponderate = 1./( 1 + pow(double(_curr_i)/_n, (2*log( (double) 10.0))/log(double(_em_nitermax))) );     
     }	
     
     //! e step iteration for vertex i

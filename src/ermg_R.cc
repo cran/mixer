@@ -37,6 +37,9 @@ using namespace std;
 using namespace ermg;
 
 extern "C" {
+  void srand_stdlib( unsigned int* seed ) { srand(*seed); 
+}
+
   void main_ermg(int*    symmetrize, // param for main_ermg function
 		 int*    loop,
 		 int*    undirected,
@@ -58,7 +61,7 @@ extern "C" {
 		 int*    m,	// the list of edges
 		 double* res){
     
-    srand((long)getpid());
+    // ??? srand((long)getpid());
     
     // GRAPH
     bool tosym = *symmetrize;

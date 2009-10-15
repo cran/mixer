@@ -1,40 +1,65 @@
-mixer<-function(x,qmin=2,qmax=NULL,method="variational",nbiter=10,improve=FALSE)
+mixer<-function( x, qmin=2, qmax=NULL, method="variational",
+                 directed=NULL, nbiter=10, fpnbiter=5, improve=FALSE )
   {
 
+    
   ## How the graph is coded ?
   if (is.character(x)){
     ## spm file
-       g <- new("spmgraph",x)
-       m <- getEdges(g)
-     }
-  else if (dim(x)[1]==dim(x)[2]){
-    ## Adjacency matrix: convert the adjacency matrix to the required edge list format  
-        AdjMat2Edges(x)->m
-      }
-  else {
-    ## Edge list
-       m<-x
+    g <- new("spmgraph",x)
+    m <- getEdges(g)
+    
+    if( is.null(directed) ) {
+      directed = is.symetric(m)
+      cat("Mixer: the edge list has been transformed to ")
+      if (directed) 
+        cat("a directed adjacency matrix\n")
+      else
+        cat("an undirected adjacency matrix\n")
     }
+    # Only connected nodes are in "m" 
+    # The nodes are renumbered 
+    ConnectedNodes <- as.numeric( names( g@nodeindexes ) )
+  } else if (dim(x)[1]==dim(x)[2]){
+    ## Adjacency matrix
 
-  nbrNodes<-max(m)  
-  
+    if( is.null(directed) ) {
+      directed <- (! is.symetric( x ) )
+      cat("Mixer : the edge list has been transformed in a ")
+      if (directed) 
+        cat("directed adjacency matrix\n")
+      else
+        cat("undirected adjacency matrix\n")
+    }
+    ConnectedNodes  <- getConnectedNodes(x, directed=directed) 
+    m  <- AdjMat2Edges(x, directed=directed) 
+  } else {
+    ## Edge list
+    m <- x
+    directed <- (! is.symetric( m ) )
+    ConnectedNodes <- 1:max(m)
+  }
+
+  nbrNodes <- max(m)  
+
   ## How to find the proper order.....
   readingOrder<-unique(as.numeric(m));
   
 
   ## prepare the arguments
-  undirected<-TRUE
+  undirected<- !( directed) 
   loop<-FALSE
-  kmeansnbclass<- 0   # Accelerate the initialization (used to start the HAC (sould be between NbrNodes and qmax)
-  kmeansnbiter<-30     #  
-  emeps<-1e-10          # tolerance for em (compare the likelihood)
-  fpeps<-1e-4             # tolerance for the fixed point internal loop (on the taus...)
-  nokmeans<-TRUE     # No acceleration via kmeans
-  fpnbiter<-5               # fixed point nbiter
+  kmeansnbclass<- 0   # Accelerate the initialization (used to start the HAC
+                      # (should be between NbrNodes and qmax)
+  kmeansnbiter<-30    #  
+  emeps<-1e-10        # tolerance for em (compare the likelihood)
+  fpeps<-1e-4         # tolerance for the fixed point internal loop
+                      # (on the taus...)
+  nokmeans<-TRUE      # No acceleration via kmeans
   
-  silent<-TRUE         # no verbose
-  initnbv<-0           # size of the initial network for the online version
-  improvenbiter<-3     # number of iteration for the improvment phase
+  silent<-TRUE        # no verbose
+  initnbv<-0          # size of the initial network for the online version
+  improvenbiter<-3    # number of iteration for the improvment phase
 
 
   ## ensure the options compatibility
@@ -51,9 +76,14 @@ mixer<-function(x,qmin=2,qmax=NULL,method="variational",nbiter=10,improve=FALSE)
     
   ## Ensure number of classes coherence
   if (is.null(qmax)){
-    qmax<-qmin+0
+    qmax<-qmin
   }
+
+  if( length(ConnectedNodes) < qmax ) {
+    stop("q-class value greater than the number of nodes.")
+  } 
   
+
   ## compute the size of the returned array from the .C call
   
   nbrClasses <- qmax - qmin + 1
@@ -66,7 +96,8 @@ mixer<-function(x,qmin=2,qmax=NULL,method="variational",nbiter=10,improve=FALSE)
 
   ##Chose the method for the parameter estimation
   if (method=="bayesian"){
-    bout <- VariationalBayes(m, qmin, qmax, nbiter, fpnbiter, emeps, fpeps)
+    bout <- VariationalBayes(m, qmin, qmax, nbiter, fpnbiter,
+                             emeps, fpeps, directed )
   }
   else if (method=="classification"){
     xout <- .C("main_ermgo",
@@ -126,9 +157,13 @@ mixer<-function(x,qmin=2,qmax=NULL,method="variational",nbiter=10,improve=FALSE)
       y[[j]]$Taus[,readingOrder] <- y[[j]]$Taus
       j <- j+1
     }
-    result<-list(method=method,edges=m,qmin=qmin,qmax=qmax,output=y)
+    result<-list(method=method,nnodes=nbrNodes, map=ConnectedNodes,
+                 edges=m,qmin=qmin,qmax=qmax,output=y,
+                 directed=directed)
   } else {
-    result<-list(method=method,edges=m,qmin=qmin,qmax=qmax,output=bout)
+    result<-list(method=method,nnodes=nbrNodes,  map=ConnectedNodes,
+                 edges=m,qmin=qmin,qmax=qmax,output=bout,
+                 directed=directed)
   }
   class(result)<-"mixer"
   return(result)
@@ -140,7 +175,7 @@ mixer<-function(x,qmin=2,qmax=NULL,method="variational",nbiter=10,improve=FALSE)
 ploticl<-function(x,q,...)
   {
     if (x$method == "bayesian" ){
-      title = "Bayesian criterion versus class number"
+      title = "Bayesian criterion vs class number"
       y.lab = "Bayesian criterion"
     } else {
       title = "Integrated Classification Likelihood"
@@ -194,10 +229,16 @@ text(D$vector[,a],D$vector[,b],label=1:q)
 ############################################################
 
 
-mixture<-function(x,alphas,lambdaq){fx<-0; for (q in 1:length(alphas)) fx<-fx+alphas[q]*dpois(x,lambda=lambdaq[q])}
+mixture<-function(x,alphas,lambdaq){
+  fx<-0; for (q in 1:length(alphas)) fx<-fx+alphas[q]*dpois(x,lambda=lambdaq[q])
+}
 
-plotmixture<-function(degrees,Pis,alphas,n){
-  colSums(Pis*alphas)*(n-1)->lambdaq
+plotmixture<-function(degrees,Pis,alphas,n, directed=FALSE){
+  if( directed )
+    colSums(Pis*alphas)*(2*n-2)->lambdaq
+  else
+    colSums(Pis*alphas)*(n-1)->lambdaq
+    
   min(degrees):max(degrees)->x
   mixture(x,alphas,lambdaq)->y
   histo<-hist(degrees,plot=FALSE)
@@ -212,27 +253,114 @@ plotmixture<-function(degrees,Pis,alphas,n){
 ############################################################
 is.mixer<-function(x){if (class(x)=="mixer") TRUE else FALSE}
 
-plot.mixer<-function(x,q=NULL,...){  
-x->mixer.res
-par(mfrow=c(1,2))
-n<-dim(mixer.res$x)[1]
-if (!is.mixer(mixer.res)) stop("Not a mixer object")
+plot.mixer<-function(x, q=NULL, frame=1:4, classes=NULL, quantile.val=0.1, ...){  
+
+  # Test x
+  if (!is.mixer( x ))
+    stop("Not a mixer object")
+  x->mixer.res
+  
+  # Test q
+  if( ! is.null(q)) {
+    if( ! (q %in% x$qmin:x$qmax)  )
+      stop("Bad value of 'q'")
+  }
+
+  # Test frame
+  if( ! (is.numeric(frame) &  all( frame %in% 1:5) ) )
+      stop("Bad frame number")
+  
+  # Test classes
+  if( ! ( is.factor( classes ) | is.null( classes ) ))
+      stop("'classes' not factor")
+  
+  if( ! is.null( classes) & length(classes) != x$nnodes )
+      stop("Bad 'classes' length ")
+    
+  if( ! is.numeric(quantile.val) )
+      stop("Bad 'quantile.val' value")
+
+  #
+  # Frames
+  #
+  
+  # Remove bad Frames numbers
+  index <- which( frame > 5 )
+  if( length( index ) != 0 )
+    frame <- frame[ - index ]
+  frame <- unique( frame )
+  
+  nb.frame <-  length( frame )
+
+  # Tool large number of frames : remove the last frames
+  if( nb.frame > 4 ) {
+      frame <- frame[ -5:-nb.frame]
+      nb.frame <- 4
+  }
+  
+  n<-dim(mixer.res$x)[1]
  
-if (is.null(q)) {# find the best number of classes according ICL
-                  ICL<-unlist(lapply(mixer.res$output,
-                                     ICL<-function(x) x$criterion))
-                  which.max(ICL)->i
-                  q<-length(mixer.res$output[[i]]$alphas)
-                }
+  if ( is.null(q) ) {
+    # find the best number of classes according ICL
+    ICL<-unlist( lapply( mixer.res$output,
+                         ICL<-function(x) x$criterion))
+    which.max(ICL)->i
+    q<-length(mixer.res$output[[i]]$alphas)
+  }
 
-apply(mixer.res$output[[q-mixer.res$qmin+1]]$Taus,2,which.max)->cluster
-Pis<-mixer.res$output[[q-mixer.res$qmin+1]]$Pis
-alphas<-mixer.res$output[[q-mixer.res$qmin+1]]$alphas
+  apply(mixer.res$output[[q-mixer.res$qmin+1]]$Taus,2,which.max)->cluster
+  Pis<-mixer.res$output[[q-mixer.res$qmin+1]]$Pis
+  alphas<-mixer.res$output[[q-mixer.res$qmin+1]]$alphas
 
-ploticl(mixer.res,q)
-plotam(mixer.res$edges,cluster)
-x11()
-Gplot(mixer.res$edges, cl=cluster, main="Graph")
+  x11() 
+  # Frames to display
+  nb.col <- 2
+  nb.lin <- 2
+  if ( nb.frame == 1) {
+    nb.col <- 1
+    nb.lin <- 1
+  } else if ( nb.frame == 2) {
+    nb.col <- 2
+    nb.lin <- 1
+  }
+  
+  par(mfrow=c(nb.lin, nb.col))
+
+  if( 1 %in% frame ){
+    ploticl(mixer.res,q)
+  }
+  if( 2 %in% frame ) {
+    plotam(mixer.res$edges,cluster)
+  }
+  if( 3 %in% frame ){
+    Degrees <- rep( 0, mixer.res$nnodes )
+    for ( i in 1:dim(mixer.res$edges)[2] ) {
+      node = mixer.res$edges[1, i]
+      Degrees[ node ] = Degrees[ node ] + 1
+      node = mixer.res$edges[2, i]
+      Degrees[ node ] = Degrees[ node ] + 1
+    }
+    plotmixture( Degrees, Pis, alphas, mixer.res$nnodes, mixer.res$directed  ) 
+  }
+  if( 4 %in% frame ){
+    if( !is.null( classes ) ) {
+      pie.coef = table( factor( cluster, levels=1:q ) , classes )
+
+      # Normalization
+      for ( i in 1:dim(pie.coef)[1] ) {
+        max =  max( pie.coef[i, ] )
+        if ( max != 0 )
+          pie.coef[i, ] = pie.coef[i, ] / max
+      }
+    } else {
+      pie.coef = NULL
+    }
+    Gplot( Pis, type="pie.nodes", node.weight=alphas, node.pie.coef=pie.coef,
+           quantile.val = quantile.val, main="Inter/intra class probabilities" )
+  }
+  if( 5 %in% frame )
+    Gplot( mixer.res$edges, class=cluster, main="Graph", directed=x$directed )
+    
 }
 
 
@@ -252,7 +380,9 @@ class.ind<-function (cl)
 }
 
 
-graph.affiliation<-function(n=100,alphaVect=c(1/2,1/2),lambda=0.7,epsilon=0.05) {
+graph.affiliation<-function( n=100,
+                             alphaVect=c(1/2,1/2), lambda=0.7, epsilon=0.05,
+                             directed=FALSE) {
       # INPUT  n: number of vertex
       #           alphaVect : vecteur of class proportion
       #           lambda: proba of edge given  same classe
@@ -263,17 +393,34 @@ graph.affiliation<-function(n=100,alphaVect=c(1/2,1/2),lambda=0.7,epsilon=0.05) 
      
       x<-matrix(0,n,n);
       Q<-length(alphaVect);
+      NodeToClass <- vector(length=n) 
       rmultinom(1, size=n, prob = alphaVect)->nq;
       Z<-class.ind(rep(1:Q,nq));
       Z<-Z[sample(1:n,n),];
-      for (i in 1:n)
-        for (j in i:n)
-            {
+      for (i in 1:n) {
+        NodeToClass[i] <- which.max( Z[i,] )
+      }
+      for (i in 1:n) {
+        if ( i != n) {
+          for (j in (i+1):n) {
             # if i and j in same class
-            if (which.max(Z[i,])  == which.max(Z[j,])) p<-lambda else  p<-epsilon
-            if ((rbinom(1,1,p))&(i != j)) {x[i,j]<-1; x[j,i]<-1}
+            if ( NodeToClass[i] ==  NodeToClass[j]) p<-lambda else  p<-epsilon
+            if ( (rbinom(1,1,p) )) { x[i,j] <- 1 }
+          }
+          if ( directed ) {
+            if ( i != 1) {
+              for (j in 1:(i-1)) {
+                if ( NodeToClass[i] ==  NodeToClass[j]) p<-lambda else  p<-epsilon
+                if ( (rbinom(1,1,p) )) { x[i,j] <- 1 }
+              }
             }
-       return(list(x=x,cluster=apply(Z,1,which.max)) )   
+          }
+        }
+      }
+      if ( ! directed ) {
+        x <- x + t(x)
+      }
+      return(list(x=x,cluster=apply(Z,1,which.max)) )   
   }
 
 
@@ -318,21 +465,94 @@ randError<-function(x, y) {
 ##############################################################
 #  transform of an adjacency matrix  into an array of edges  
 ##############################################################
-
-AdjMat2Edges<-function(x)
-  { if (dim(x)[1]==dim(x)[2]){
-        # 1) Adjacency matrix: convert the adjacency matrix to the required edge list format  
-        aloof<-which(colSums(x)==0)
-        if (length(aloof)>0) {
-              x<-x[-aloof,-aloof]
-              warning("Some nodes are not connected to the network",call. = FALSE)
-            }
-        nbrNodes<-dim(x)[1]
-        m<-t(which((x==1) & (upper.tri(x)),arr.ind=TRUE))
-      }
-    return(m)
+AdjMat2Edges<-function(x, directed=FALSE ) {
+  
+  if (dim(x)[1] == dim(x)[2]){
+    
+    # Adjacency matrix case
+    nbrNodes<-dim(x)[1]
+    NotConnected <- which( (rowSums( x ) + colSums(x)) == 0)
+    if ( length(NotConnected) > 0 ) {
+      x <- x[ - NotConnected, - NotConnected ]
+       warning("Some nodes are not connected to the network",call. = FALSE)
+    } 
+    if ( directed ) {
+      m <- t( which( (x==1) , arr.ind=TRUE) )
+    } else {
+      m <- t( which( (x==1) & (upper.tri(x)), arr.ind=TRUE) )
+    }
   }
 
+  return( m )
+}
 
+##############################################################
+#  Return the index list of connected nodes 
+##############################################################
+getConnectedNodes<-function(x, directed=FALSE ) {
+  
+  if (dim(x)[1] == dim(x)[2]){
+    
+    # Adjacency matrix case
+    nbrNodes<-dim(x)[1]
+    NotConnected <- which( (rowSums( x ) + colSums(x)) == 0)
+    ConnectedNodes <- 1:nbrNodes
+    if ( length(NotConnected) > 0 ) {
+      ConnectedNodes = ConnectedNodes[  - NotConnected ]
+    } 
+  }
+  return( ConnectedNodes )
+}
 
+##############################################################
+# Set the seed of random functions of C/C++ part
+##############################################################
+setSeed <- function( seed=1 ) {
+  invisible( .C("srand_stdlib",
+                   as.integer(seed)
+            ) )
+}
 
+##############################################################
+# Declare a generic function
+##############################################################
+getModel <- function( object, ... )
+{
+  UseMethod("getModel", object)
+}
+
+##############################################################
+# Return model parameters.
+##############################################################
+getModel.mixer <- function( object, ...) {
+  
+  # Test x
+  if ( !is.mixer( object ) )
+    stop("Not a mixer object")
+  x <- object
+  
+  # Get optional parameter q
+  q <- sub.param("q", NULL	, ...)
+  
+  # Test q
+  if( ! is.null(q)) {
+    if( ! (q %in% x$qmin:x$qmax)  )
+      stop("Bad value of 'q'")
+  }
+  if ( is.null(q) ) {
+    # find the best number of classes according ICL
+    ICL <- unlist( lapply( x$output, ICL<-function(x) x$criterion))
+    i   <- which.max(ICL)
+    q   <- length(x$output[[i]]$alphas)
+  }
+
+  i <- q - x$qmin + 1
+  res <- list(q         = q,
+              criterion = x$output[[i]]$criterion ,
+              alphas    = x$output[[i]]$alphas,
+              Pis       = x$output[[i]]$Pis,
+              Taus      = x$output[[i]]$Taus
+              )
+  return( res ) 
+
+}

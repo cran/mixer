@@ -50,7 +50,8 @@ extern "C" {
 		 int*    m,	// the list of edges
 		 double* tau) {
     
-    srand((long)getpid());
+    // ???
+    // srand((long)getpid());
 
     int                 q = *q_p; 
     int     improvenbiter = 0;
@@ -58,7 +59,7 @@ extern "C" {
     double  emeps         = 1e5;
     int     fpnbiter      = 0 ;
     double  fpeps         = 1e5 ;
-    int     improve       = 1;
+    // int     improve       = 1;
     int     classif       = 1;
     int     qmin          = q;
     int     qmax          = q;
@@ -135,7 +136,7 @@ extern "C" {
       //}
       
       
-      double icl ;
+      // double icl ;
       std::vector<double>::iterator it_Alpha ;
       BandMemMatrix<double>::BandCursor it_Pi ;
       BandMemMatrix<double>::BandCursor it_t_Tau ;

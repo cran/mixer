@@ -1,94 +1,112 @@
+
 ######################
 # Variational M step #
 ######################
-VMstep<-function(X, nX, N, Q, tau, pCts0){
-  
+VMstep<-function(X, nX, N, Q, tau, pCts0, directed=FALSE){
+
+
   pCts <- list()
   pCts$n <- pCts0$n + colSums(tau)
   
   pCts$eta <- t(tau)%*%X%*%tau
-  pCts$eta[seq(1, Q^2, by=Q+1)] <- pCts$eta[seq(1, Q^2, by=Q+1)]/2
+  if ( ! directed )
+    pCts$eta[seq(1, Q^2, by=Q+1)] <- pCts$eta[seq(1, Q^2, by=Q+1)]/2
+
   pCts$eta <- pCts$eta + pCts0$eta
   
   pCts$zeta <- t(tau)%*%nX%*%tau
-  pCts$zeta[seq(1, Q^2, by=Q+1)] <- pCts$zeta[seq(1, Q^2, by=Q+1)]/2
-  pCts$zeta <- pCts$zeta + pCts0$zeta
+  if( ! directed )
+    pCts$zeta[seq(1, Q^2, by=Q+1)] <- pCts$zeta[seq(1, Q^2, by=Q+1)]/2
     
- return(pCts)
+  pCts$zeta <- pCts$zeta + pCts0$zeta
+  
+  return(pCts)
 }             
 
-######################
-# Variational E step #
-######################
-VEstep<-function(X, N, Q, mincut, maxcut, tau, pCts, dmaxInner){
-
+###############################
+# Variational E step - C call #
+###############################
+VEstep.C<-function( X, N, Q, mincut, maxcut, tau, pCts, dmaxInner, fpnbiter,
+                    directed=FALSE) {
+  
   dGamma <- 1
-  t      <- 1
+  nit    <- 1
 
   A <- digamma(pCts$eta)
   B <- digamma(pCts$zeta)
   C <- digamma(pCts$eta + pCts$zeta)
-  D <- B - C
+  
+  if (directed)
+    D <- B + t(B) - C - t(C)
+  else
+    D <- B - C
+  
   E <- A - B
 
-  while (is.finite(dGamma) & dGamma>dmaxInner ) {
-   
-    tauOld <- tau
-    for (i in 1:N) {
-      if(Q ==1) {    
-      tau[i, ] <- digamma(pCts$n) - digamma(sum(pCts$n)) + sum((tau%*%D + (tau%*%E)*matrix(rep(X[, i], Q), N, Q, byrow=FALSE))[-i, ])
-      } else {
-      tau[i, ] <- digamma(pCts$n) - digamma(sum(pCts$n)) + colSums((tau%*%D + (tau%*%E)*matrix(rep(X[, i], Q), N, Q, byrow=FALSE))[-i, ])
-      }
-      
-      tau[i, ] <- pmin(tau[i, ], maxcut)
-      tau[i, ] <- pmax(tau[i, ], mincut)
-      tau[i, ] <- exp(tau[i, ])
-      tau[i, ] <- tau[i, ]/sum(tau[i, ])
-      tau[i, ][tau[i, ] < .Machine$double.xmin] <- .Machine$double.xmin
-      }
-       
-    dGamma <- sum(abs(tau - tauOld))
-    #dGamma <- max(abs(tau - tauOld))
+  digamma.n     <- digamma(pCts$n) 
+  digamma.sum.n <- digamma(sum(pCts$n))
 
-    t <- t + 1 
-  }
-    
-  return(tau)
+  CstMat <- matrix( rep(digamma.n - digamma.sum.n, N), N, Q, byrow=TRUE)
+
+  i.directed <- directed
+  
+  res <- .C("VEstep_",
+            as.integer(N),          # Number of nodes
+            as.integer(Q),          # Number of classes
+            as.double(X),           # Adjacency  matrix(N,N)
+                                    # Remarks: <integer> converted to <double>
+            as.double(D),           # Tau %*% D matrix(N,Q)
+            as.double(E),           # Tau %*% E matrix(N,Q)
+            as.double(CstMat),      # Constant matrix(N,Q)   
+            as.double(mincut),      # Min. value cut-off   
+            as.double(maxcut),      # Max. value cut-off   
+            as.double(dmaxInner),   # Convergence criterion
+            as.integer(fpnbiter),   # Max. iteration number
+            as.integer(directed),   # Directed matrix
+            res = as.double(tau),   # Taus (input/output)
+            niter=as.integer(nit)   # Number of iterations
+            )
+  # cat(" [C, dir=", directed, " ] iter = ", res$niter, "\n")
+  tau <- matrix(res$res, N, Q )
+  return( tau )
 }
 
 ###############
 # Lower Bound #
 ###############
-lowerBound<-function(tau, pCts0, pCts){
+lowerBound<-function(tau, pCts0, pCts, directed=FALSE){
 
   Q <- dim(tau)[2]
-  A <- lbeta(pCts$eta, pCts$zeta)
-  B <- lbeta(pCts0$eta, pCts0$zeta)
 
-  l <- - sum(tau*log(tau)) + lgamma(sum(pCts0$n)) - lgamma(sum(pCts$n)) - sum(lgamma(pCts0$n) - lgamma(pCts$n)) + (1/2)*sum(A[-seq(1, Q^2, by=Q+1)]) + sum(A[seq(1, Q^2, by=Q+1)]) - (1/2)*sum(B[-seq(1, Q^2, by=Q+1)]) - sum(B[seq(1, Q^2, by=Q+1)])
-  
- return(l)
+  if ( directed ) {
+    l <- - sum(tau*log(tau)) + lgamma(sum(pCts0$n)) - lgamma(sum(pCts$n)) - sum(lgamma(pCts0$n) - lgamma(pCts$n)) + sum(lbeta(pCts$eta, pCts$zeta) - lbeta(pCts0$eta, pCts0$zeta))
+  } else {
+    A <- lbeta(pCts$eta, pCts$zeta)
+    B <- lbeta(pCts0$eta, pCts0$zeta)
+    l <- - sum(tau*log(tau)) + lgamma(sum(pCts0$n)) - lgamma(sum(pCts$n)) - sum(lgamma(pCts0$n) - lgamma(pCts$n)) + (1/2)*sum(A[-seq(1, Q^2, by=Q+1)]) + sum(A[seq(1, Q^2, by=Q+1)]) - (1/2)*sum(B[-seq(1, Q^2, by=Q+1)]) - sum(B[seq(1, Q^2, by=Q+1)])
+  }
+  return(l)
 }
 
 #####################
 # Variational Bayes #
 #####################
-VariationalBayes<-function(m, qmin, qmax, nbiter, fpnbiter, emeps, fpeps) {
+VariationalBayes <-
+  function(m, qmin, qmax, nbiter, fpnbiter, emeps, fpeps, directed=FALSE) {
 
   ## Edge matrix to Adjacency matrix
   N <- max(m)
   X<-matrix(0, N, N )
   X[ cbind( m[1,], m[2,]) ] <- 1
-  X[ cbind( m[2,], m[1,]) ] <- 1
+  if( ! directed )
+    X[ cbind( m[2,], m[1,]) ] <- 1
   
   ## How to find the proper order.....
   readingOrder<-unique(as.numeric(m));
 
   
   if( is.null(qmax) )
-# ???    qmax <- qmin
-    qmax <- qmin + 0
+    qmax <- qmin
   
   X <- sign(X) # check that the graph contains binary edges
   
@@ -103,9 +121,9 @@ VariationalBayes<-function(m, qmin, qmax, nbiter, fpnbiter, emeps, fpeps) {
   pCts0 <- list()
 
   # Parameters for ERMG Initilization 
-  symetrize     <- TRUE
+  symetrize     <- ! directed
   loop          <- FALSE
-  undirected    <- TRUE
+  undirected    <- ! directed
   silent        <- TRUE
   nokmeans      <- TRUE
   kmeansnbclass <- 0
@@ -115,12 +133,13 @@ VariationalBayes<-function(m, qmin, qmax, nbiter, fpnbiter, emeps, fpeps) {
   # Result index
   i.res <- 1                  
   y <-  vector("list", qmax-qmin+1)
+
+  
   for (Q in qmin:qmax ) {
 
     maxcut <- log(.Machine$double.xmax) - log(Q)
     mincut <- log(.Machine$double.xmin)
 
-    # pCts0$n    <- rep(1/2, Q)
     pCts0$n    <- rep(1, Q)
     pCts0$eta  <- matrix(rep(1, Q^2), Q, Q)
     pCts0$zeta <- matrix(rep(1, Q^2), Q, Q)
@@ -158,37 +177,45 @@ VariationalBayes<-function(m, qmin, qmax, nbiter, fpnbiter, emeps, fpeps) {
     tau[tau<.Machine$double.xmin] <- .Machine$double.xmin
 
     delta <- 1
-    i     <- 0
-    l     <- list()
+    i <- 0
+    l <- list()
 
-    if (nbiter != 0) {
-      while(is.finite(delta) == TRUE & delta>vbOptions$dmaxOuter) {
-        i <- i + 1
-        pCts <- VMstep(X, nX, N, Q, tau, pCts0)
-        l[[i]] <- lowerBound(tau, pCts0, pCts)
 
-        tau <- VEstep(X, N, Q, mincut, maxcut, tau, pCts, vbOptions$dmaxInner)
-        if(i > 1) {
-          delta <- abs((l[[i]] - l[[i-1]])/l[[i-1]])
-        }
+    while(  is.finite(delta) == TRUE
+            & delta>vbOptions$dmaxOuter
+            & (i < nbiter)
+          ) {
+      i <- i + 1
+      pCts <- VMstep( X, nX, N, Q, tau, pCts0, directed )
+
+      l[[i]] <- lowerBound(tau, pCts0, pCts, directed)
+      tau <- VEstep.C( X, N, Q, mincut, maxcut, tau, pCts,
+                       vbOptions$dmaxInner, fpnbiter, directed )
+      
+      if(i > 1) {
+        delta <- abs((l[[i]] - l[[i-1]])/l[[i-1]])
       }
-    } else {
+    }
+  
+    # Only intialization   
+    if ( nbiter == 0 ) {
       pCts <- pCts0
       l[[1]] <- 0
     }
+    
     # Store results
     # -------------
     #  
     # ICL item is nn fact the Bayesian criterion
-    y[[i.res]]$criterion <- max(as.numeric(as.matrix(l)))- log( factorial(Q) )
+    y[[i.res]]$criterion <- max( as.numeric(as.matrix(l)) ) 
     y[[i.res]]$alphas    <- pCts$n / sum( pCts$n ) 
     y[[i.res]]$Pis       <- pCts$eta / (pCts$eta+pCts$zeta)
     y[[i.res]]$Taus      <- t(tau)
     i.res <- i.res+1
-    
   }
-
+  
   return(y)  
+   
 }
 
 

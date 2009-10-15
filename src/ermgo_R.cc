@@ -51,11 +51,12 @@ extern "C" {
 		  int*    qmax,
 		  int*    qmin,
 		  int*    nbrEdges,	// nbr of edges, in the given graph
-		  int*    nodes, // nbr of nodes of the graph
-		  int*    m,	// the list of edges
+		  int*    nodes,        // nbr of nodes of the graph
+		  int*    m,	        // the list of edges
 		  double* res){
 
-    srand((long)getpid());
+    // ??? srand((long)getpid());
+    printf("rANDOM : %d\n", rand() );
     
     // GRAPH
     bool tosym = true;

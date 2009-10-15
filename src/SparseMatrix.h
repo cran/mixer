@@ -99,7 +99,7 @@ namespace ermg {
 	//std::cerr<<"0 ";
 	//}
 	if (fullDiagonal(i)){
-	  sum += sqrt(s-1)*vecin[i]; // degree
+	  sum += sqrt( static_cast<double> (s-1) )*vecin[i]; // degree
 	  //sum += (s-1)*vecin[i]; // degree
 	  //std::cerr<<s-1<<" ";
 	  pos++;

@@ -1,0 +1,11 @@
+NEWS/Changelog
+
+
+1.0-0	(2009-10-27)
+    +	oriented graphs allowed.
+    +   bayesian method optimisation (C/C++ implementation).
+    +   graphics improvments.
+    +   fixing CRAN warnings
+
+0.2-0	(2008-10-15)
+    +	Initial release
