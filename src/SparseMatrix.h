@@ -106,7 +106,9 @@ namespace ermg {
 	  it_l++;
 	}
 	else{
-	  sum += sqrt(s)*vecin[i]; // degree
+	  // GG Nov-2009
+	  // sum += sqrt( s )*vecin[i]; // degree
+	  sum += sqrt( static_cast<double> (s) )*vecin[i]; // degree
 	  //sum += s*vecin[i]; // degree
 	}
 	    

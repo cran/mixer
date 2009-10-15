@@ -20,7 +20,7 @@ A mixture model for random graphs. Statistics and Computing, 18, 2, 151--171."
           )
 
 citEntry(entry  = "Article",
-         title  = "Fast online graph clustering via Erdös-Rényi mixture.",
+         title  = "Fast online graph clustering via Erdos-Renyi mixture.",
          journal= "Pattern Recognition",
          volume= "41",
          pages= "3592-3599",

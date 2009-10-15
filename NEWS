@@ -1,7 +1,10 @@
 NEWS/Changelog
 
+1.1	(2009-11-26)
+    +	Fix compilation problems for 64 bits machines
 
-1.0-0	(2009-10-27)
+
+1.0	(2009-10-27)
     +	oriented graphs allowed.
     +   bayesian method optimisation (C/C++ implementation).
     +   graphics improvments.
