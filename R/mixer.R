@@ -25,7 +25,7 @@ mixer<-function( x, qmin=2, qmax=NULL, method="variational",
 
     if( is.null(directed) ) {
       directed <- (! is.symetric( x ) )
-      cat("Mixer : the edge list has been transformed in a ")
+      cat("Mixer: the edge list has been transformed in a ")
       if (directed) 
         cat("directed adjacency matrix\n")
       else
@@ -230,7 +230,10 @@ text(D$vector[,a],D$vector[,b],label=1:q)
 
 
 mixture<-function(x,alphas,lambdaq){
-  fx<-0; for (q in 1:length(alphas)) fx<-fx+alphas[q]*dpois(x,lambda=lambdaq[q])
+  fx<-0; for (q in 1:length(alphas)) {
+    fx<-fx+alphas[q]*dpois(x,lambda=lambdaq[q])
+  }
+  return(fx)
 }
 
 plotmixture<-function(degrees,Pis,alphas,n, directed=FALSE){
@@ -312,7 +315,6 @@ plot.mixer<-function(x, q=NULL, frame=1:4, classes=NULL, quantile.val=0.1, ...){
   Pis<-mixer.res$output[[q-mixer.res$qmin+1]]$Pis
   alphas<-mixer.res$output[[q-mixer.res$qmin+1]]$alphas
 
-  x11() 
   # Frames to display
   nb.col <- 2
   nb.lin <- 2
@@ -361,6 +363,7 @@ plot.mixer<-function(x, q=NULL, frame=1:4, classes=NULL, quantile.val=0.1, ...){
   if( 5 %in% frame )
     Gplot( mixer.res$edges, class=cluster, main="Graph", directed=x$directed )
     
+  par( mfrow=c(1, 1) )
 }
 
 
@@ -474,7 +477,7 @@ AdjMat2Edges<-function(x, directed=FALSE ) {
     NotConnected <- which( (rowSums( x ) + colSums(x)) == 0)
     if ( length(NotConnected) > 0 ) {
       x <- x[ - NotConnected, - NotConnected ]
-       warning("Some nodes are not connected to the network",call. = FALSE)
+       cat("Mixer: some nodes are not connected to the network \n")
     } 
     if ( directed ) {
       m <- t( which( (x==1) , arr.ind=TRUE) )

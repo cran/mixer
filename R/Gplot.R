@@ -27,13 +27,24 @@ Gplot <- function ( X, type="default", ... ) {
   res <- -1
 
   if( type == "default" ) {
-    same.node.pos <- all ( dim( Env$default.gr$mat) ==  dim(X) )
-    if( ( is.null(X) ) | !same.node.pos ) {
+    dim.X      <- dim(X)
+    dim.gr.mat <- dim( Env$default.gr$mat)
+    if ( length( dim.X ) == length( dim.gr.mat ) ) {
+      same.node.pos <- all ( dim( Env$default.gr$mat) ==  dim(X) )
+    } else {
+      same.node.pos <- FALSE
+    }
+
+    if( ( is.null(X) ) & !same.node.pos ) {
       # Clear memory of stored node positions
       Env$default.gr$network$coord=NULL
-    }
-    if ( ! is.null(X) ) {
-      res <- Gplot.default(  X,  coord=Env$default.gr$network$coord, ...)
+    } else {
+      if( same.node.pos ) {
+        # Keep the same node coordinates
+        res <- Gplot.default(  X,  coord=Env$default.gr$network$coord, ...)
+      } else {
+        res <- Gplot.default(  X, ...)
+      }
     }
   } else if(  type == "pie.nodes" ) {
     same.node.pos <- all ( dim( Env$pie.gr$mat) ==  dim(X) )
@@ -141,7 +152,7 @@ Gplot.default <- function ( X, ... ) {
   #     Restore context 
   #     ---------------
   Env <- get("Gplot.graph", envir=Gplot.env)
-  save.class.col <- Env$col
+  class.col <- Env$col
   
   #  Matrix check
   NNodes <- dim(X)[1]

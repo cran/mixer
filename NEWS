@@ -1,5 +1,9 @@
 NEWS/Changelog
 
+1.2	(2010-01-25)
+    +   minor graphics enhancements.
+    +	Fix log messages (pointer display on Windows 64-bits machines)
+
 1.1	(2009-11-26)
     +	Fix compilation problems for 64 bits machines
 
