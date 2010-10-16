@@ -28,6 +28,7 @@ using namespace std;
 
 #include <stdlib.h>
 #include <sys/types.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <ModelImprover.h>
 #include <Emd.h>
@@ -60,8 +61,6 @@ extern "C" {
 		 int*    nodes, // nbr of nodes of the graph
 		 int*    m,	// the list of edges
 		 double* res){
-    
-    // ??? srand((long)getpid());
     
     // GRAPH
     bool tosym = *symmetrize;

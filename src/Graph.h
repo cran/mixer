@@ -33,7 +33,7 @@
   \brief Graph class
 */
 
-
+#include <stdlib.h>
 #include <exception>
 #include <list>
 #include <map>

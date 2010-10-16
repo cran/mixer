@@ -21,9 +21,14 @@ assign("Gplot.graph",
 ##
 ## __________________________________________________________
 ##
-Gplot <- function ( X, type="default", ... ) {
-
+Gplot <- function ( X, type="default", colors=NULL, ... ) {
+  
   Env <- get("Gplot.graph", envir=Gplot.env)
+
+  if( ! is.null( colors ) ) {
+    Env$col <- colors
+    assign("Gplot.graph", Env, envir=Gplot.env )
+  }
   res <- -1
 
   if( type == "default" ) {
@@ -96,7 +101,6 @@ Gplot.default <- function ( X, ... ) {
   #    Defaults for hidden optional arguments 
   #    --------------------------------------
   
-  #  Colours for each class
   directed		<- sub.param("directed"		, NULL	, ...)
 
   class 		<- sub.param("class"		, NULL	, ...)
@@ -184,45 +188,52 @@ Gplot.default <- function ( X, ... ) {
       class <-1
     class <- rep(class, NNodes) [1: NNodes]
   }
-  
+
   # Check valid class.col
-  class <- as.factor(class)
-  nb.lev <- length( levels(class) )
+  levels <- sort( unique( class ) )
+  nb.lev <- length( levels )
+  # Isolated nodes don't belong to a class
+  if( levels[1] == -1 )
+     nb.lev <- nb.lev - 1
   if ( nb.lev > length( class.col )) {
     class.col <- sample( light.palette( nb.lev, black=FALSE ) )
   }
-  vertex.col <- class.col[as.numeric(class)]
 
+  vertex.col <- vector(length=length( class ) )
+  vertex.col[( class  != -1)] <- class.col[ class[ (class != -1) ] ]
+  # Unconnected nodes are "white" 
+  vertex.col[ ( class  == -1)] <- "white"
+  
   coord.save <- coord
   
   #    Process dustbin nodes
   #    ---------------------
 
   # Identify dustbin nodes
-  b.dust <- rep(FALSE, NNodes)
-  b.dust <- ( getDegree( X, upper=TRUE ) < degree.threshold )
-  dustbin.not.empty <- any( b.dust )
+  # b.dust <- rep(FALSE, NNodes)
+  # b.dust <- ( getDegree( X, upper=TRUE ) < degree.threshold )
+  # dustbin.not.empty <- any( b.dust )
 
-  if( sum(b.dust) == NNodes ) {
+  if( NNodes == 0) {
     cat("Gplot warning : no node to display \n")
     return(coord)
   }
   
   # Remove dustbin nodes
-  if (dustbin.not.empty) {
-    X <- X[!b.dust,!b.dust]
-    NNodes <- dim(X)[1]
-    if (!is.null(coord)) {
-      coord <- coord [!b.dust,]
-    }
-    if (!is.null(class)) {
-      class <- class [!b.dust]
-    }
-    if (!is.null(label)) {
-      label <- label [!b.dust]
-    }
-    vertex.col <- vertex.col[!b.dust]
-  }
+  # if (dustbin.not.empty) {
+  #  X <- X[!b.dust,!b.dust]
+  #  NNodes <- dim(X)[1]
+  #  if (!is.null(coord)) {
+  #    coord <- coord [!b.dust,]
+  #  }
+  #  if (!is.null(class)) {
+  #    class <- class [!b.dust]
+  #  }
+  #  if (!is.null(label)) {
+  #    label <- label [!b.dust]
+  #  }
+  #  vertex.col <- vertex.col[!b.dust]
+  # }
 
   #    Set graphic parameters
   #    ----------------------

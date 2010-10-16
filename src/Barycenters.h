@@ -36,7 +36,7 @@
 #include <SparseMatrix.h>
 #include <BandMemMatrix.h>
 #include <cmath>
-//#include <cstdlib>
+#include <cstdlib>
 
 namespace ermg {
 

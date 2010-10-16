@@ -1,6 +1,6 @@
 /* Ermg.h
  *
- * Copyright (C) 2006 Laboratoire Statistique & Génome
+ * Copyright (C) 2006 Laboratoire Statistique & Gï¿½nome
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /*!
  *   \file
  *     \author Vincent Miele
- *       \brief Erdös Reni Mixture for Graphs
+ *       \brief Erdï¿½s Reni Mixture for Graphs
  *
  *          13/03/2006
  *          
@@ -30,7 +30,7 @@
 #define ERMG_ERMG_H
 /*!
   \class Ermg libermg/Ermg.h
-  \brief Erdös Reni Mixture for Graphs class
+  \brief Erdï¿½s Reni Mixture for Graphs class
 */
 
 
@@ -39,7 +39,7 @@
 #include <SparseMatrix.h>
 #include <BandMemMatrix.h>
 #include <Graph.h>
-
+#include <stdlib.h>
 
 namespace ermg {
 
@@ -93,9 +93,7 @@ namespace ermg {
 
     //! allows edge from a vertex to itself
     bool _enable_loop;
-
-    //! initialization before em
-    bool emInit( int nbclass );   
+   
     //! initialization of _class and _alpha from _save_class before em
     bool emInitClassAlpha();
     //! initialization of Tau from the CAH _class
@@ -145,7 +143,9 @@ namespace ermg {
     std::vector<int>::iterator _it_card_c1;
     //! iterator points to _cardinal_class
     std::vector<int>::iterator _it_card_c2;
-    //! returns the number of unempty classes
+    //! true for renumerating classes
+    bool _torenumerate;
+    //! returns the number of  unempty classes
     int currentNbClass();
   
   
@@ -291,7 +291,8 @@ namespace ermg {
     //! saves class
     std::vector<int>& savedClass(int q=0);
     
-    
+     //! initialization before em
+    bool emInit( int nbclass );   
     //! performs the em step 
     bool em(EmCore& em, int nbclass);
     
@@ -304,6 +305,18 @@ namespace ermg {
     //! returns the entropy for the class q 
     double entropy(int q);
 
+    //! returns alpha for vertex i
+    double& alpha(int i){
+      return _Alpha[i];
+    }
+    //! returns Pi for classes q and l
+    double& pi(int q, int l){
+      return _Pi.value(q,l);
+    }
+    //! returns Tau for class q and vertex i
+    double& tau(int q, int i){
+      return _t_Tau->value(q, i);
+    }
 
     //! returns the complete likelihood
     double completeLikelihood(){

@@ -50,6 +50,7 @@ namespace ermg {
     _kmeans_nbclass = kmeans_nbclass;
     _cah_minnbclass = cah_minnbclass;
     _cah_maxnbclass = cah_maxnbclass;
+    _torenumerate = true;
     _q = -1;
 
     _t_Tau = NULL;
@@ -95,23 +96,33 @@ namespace ermg {
     _cardinal_class.assign(_q, 0);
     
     std::vector<int>::iterator it_class = _class.begin();
-    
-    int curr_num=0;
-    vector<int> corresp(_kmeans_nbclass,-1);
-    
+       
     int defined_class=0;
-    for (int i=0; i<_n; i++){
-      if (*it_class>=0){
-	defined_class++;
-	if (corresp[*it_class]==-1){
-	  corresp[*it_class]=curr_num;
-	  _cardinal_class[*it_class]=0;
-	  curr_num++;
+    if (_torenumerate ){
+      int curr_num=0;
+      vector<int> corresp(_kmeans_nbclass,-1); 
+      for (int i=0; i<_n; i++){
+	if (*it_class>=0){
+	  defined_class++;
+	  if (corresp[*it_class]==-1){
+	    corresp[*it_class]=curr_num;
+	    _cardinal_class[*it_class]=0;
+	    curr_num++;
+	  }
+	  *it_class = corresp[*it_class];
+	  _cardinal_class[*it_class]++;
 	}
-	*it_class = corresp[*it_class];
-	_cardinal_class[*it_class]++;
+	it_class++;
       }
-      it_class++;
+    }
+    else{
+      for (int i=0; i<_n; i++){
+	if (*it_class>=0){
+	  defined_class++;
+	  _cardinal_class[*it_class]++;      
+	}
+	it_class++;	
+      }      
     }
 
     int q=0;
@@ -531,8 +542,7 @@ namespace ermg {
     _curr_nbclass = this->currentNbClass();
 
     while (_curr_nbclass>_cah_maxnbclass+1){
-      this->cahStep();
-    }
+      this->cahStep();    }
   
     vector<int> aux(_n, -1);
     if (_curr_nbclass <= _cah_maxnbclass){
@@ -557,6 +567,9 @@ namespace ermg {
 
   void Ermg::replaceCahForSubXadjByLoad(const vector<int>& inputclass )
   {
+    // loaded classes mustn't not be renumerated
+    _torenumerate = false;
+
     _curr_nbclass = _cah_minnbclass;
     _kmeans_nbclass = _cah_minnbclass;
 
@@ -567,6 +580,7 @@ namespace ermg {
       exit(1);
     }
     copy(inputclass.begin(), inputclass.end(), aux.begin());
+    //copy(inputclass.begin(), inputclass.end(), std::ostream_iterator<int>(cout, "\t"));
     _save_class.push_back(aux);
   }
 

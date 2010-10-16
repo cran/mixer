@@ -9,7 +9,8 @@ connectivity matrix graph and the adjacency matrix graph. By default the four
 first plots are displayed.}
 
 \usage{
-\method{plot}{mixer}(x, q=NULL, frame=1:4, classes=NULL, quantile.val=0.1, \ldots)
+\method{plot}{mixer}(x, q=NULL, frame=1:4, classes=NULL,
+classes.col=NULL, quantile.val=0.1, \ldots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,6 +23,7 @@ first plots are displayed.}
     vector as \code{factor} of node elements (the number of external
     class levels corresponds to the number of levels). 
   }
+  \item{classes.col}{a vector of user colors used to identify the classes.}
   \item{quantile.val}{ filters the connectivity matrix values
     (Pis) in frame 4. Display the upper part (specified by
     \code{quantile.val}) of the distribution.
@@ -84,7 +86,7 @@ data(blog)
 xout <- mixer(x=blog$links,qmin=2,qmax=12)
 #  Unconnected nodes have been removed by mixer.
 #  xout$map contains the mapping from connected nodes to the whole set 
-ext.classes <-  blog$politicalParty[ xout$map ]
+ext.classes <-  blog$politicalParty
 \dontrun{ plot( xout, frame=4, classes=ext.classes )}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

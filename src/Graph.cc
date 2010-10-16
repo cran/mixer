@@ -203,14 +203,16 @@ namespace ermg {
       string tmplabel;
       linestream>>tmplabel; 
       if (tmplabel.length()) {
-	string cl;
-	linestream>>cl;
-	if (!cl.length()){
-	  cerr<<"Error: the line format \"id class\" is not respected in "<<vfile<<endl;
-	  exit(1);
+	if (tmplabel[0] != '#'){
+	  string cl;
+	  linestream>>cl;
+	  if (!cl.length()){
+	    cerr<<"Error: the line format \"id class\" is not respected in "<<vfile<<endl;
+	    exit(1);
+	  }
+	  int icl=atoi(cl.c_str());
+	  classlabelmap[tmplabel]=icl;
 	}
-	int icl=atoi(cl.c_str());
-	classlabelmap[tmplabel]=icl;
       }
     }
     gstream.close();

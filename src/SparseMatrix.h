@@ -33,7 +33,6 @@
   \brief Sparse Matrix
 */
 
-#include <cstdlib>
 
 #include <string>
 #include <vector>
@@ -42,6 +41,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <cstdlib>
 
 extern "C" { 
   void dnaupd_( int& ido, char* bmat, int& n, char* which, int& nev, double& tol, 
@@ -99,16 +99,14 @@ namespace ermg {
 	//std::cerr<<"0 ";
 	//}
 	if (fullDiagonal(i)){
-	  sum += sqrt( static_cast<double> (s-1) )*vecin[i]; // degree
+	  sum += sqrt(s-1)*vecin[i]; // degree
 	  //sum += (s-1)*vecin[i]; // degree
 	  //std::cerr<<s-1<<" ";
 	  pos++;
 	  it_l++;
 	}
 	else{
-	  // GG Nov-2009
-	  // sum += sqrt( s )*vecin[i]; // degree
-	  sum += sqrt( static_cast<double> (s) )*vecin[i]; // degree
+	  sum += sqrt(s)*vecin[i]; // degree
 	  //sum += s*vecin[i]; // degree
 	}
 	    
@@ -296,7 +294,6 @@ namespace ermg {
       }
       std::cerr<<std::endl;
     }
-      exit(1);
   }
 
 

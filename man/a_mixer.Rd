@@ -1,15 +1,15 @@
 \name{mixer}
 \alias{mixer}
-\title{MIXtures of Erdös-Rényi random graphs}
+\title{MIXtures of Erdos-Renyi random graphs}
 \description{
 Estimate the parameters, the hidden class variables, as well as the
-number of classes \code{q} of a MIXture of Erdös Rényi random graphs.
+number of classes \code{q} of a MIXture of Erdos Renyi random graphs.
 The estimation is performed for binary graphs
 (edges are assumed to be drawn from Bernoulli distributions). 
 }
 \usage{
 mixer( x, qmin=2, qmax=NULL, method="variational", directed = NULL,
-nbiter=10, fpnbiter=5, improve=FALSE)
+nbiter=10, fpnbiter=5, improve=FALSE, verbose=TRUE)
 }
 \arguments{
   \item{x}{an adjacency matrix or a matrix of edges (each column gives
@@ -24,14 +24,15 @@ nbiter=10, fpnbiter=5, improve=FALSE)
     graph. 
     Default is \code{NULL}, i.e. according to the input array \code{x},
     \code{mixer} identifies whether the graph is directed or undirected. }
-  \item{nbiter}{maximum number of EM iterations (Default: 10).}
+  \item{nbiter}{maximum number of EM iterations (default: 10).}
   \item{fpnbiter}{maximum number of internal iterations for the E step
-    (Default: 5).}
+    (default: 5).}
   \item{improve}{selects between improved or basic strategies
-    (Default: \code{FALSE}).}
+    (default: \code{FALSE}).}
+  \item{verbose}{display warning messages (default: \code{TRUE}).}
 }
 \details{
-  \code{mixer} implements the Erdös-Rényi mixture model for graphs
+  \code{mixer} implements the Erdos-Renyi mixture model for graphs
   (called MixNet) which has been proposed by Daudin et. al (2008)
   with an associated EM  estimation algorithm.
   The MixNet model is well suited to capture the structure of
@@ -104,7 +105,7 @@ June (2008), \emph{A mixture model for random graphs.}
 Statistics and Computing, 18, 2, 151--171.
 
 Hugo Zanghi, Christophe Ambroise and Vincent Miele (2008),
-\emph{Fast online graph clustering via Erdös-Rényi mixture.}
+\emph{Fast online graph clustering via Erdos-Renyi mixture.}
 Pattern Recognition, 41, 3592-3599.
 
 

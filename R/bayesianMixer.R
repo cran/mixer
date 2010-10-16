@@ -102,7 +102,7 @@ VariationalBayes <-
     X[ cbind( m[2,], m[1,]) ] <- 1
   
   ## How to find the proper order.....
-  readingOrder<-unique(as.numeric(m));
+  ## readingOrder<-unique(as.numeric(m));
 
   
   if( is.null(qmax) )
@@ -168,7 +168,7 @@ VariationalBayes <-
     tau0 <- matrix( xout$Taus[1: (Q*nbrNodes)], Q,
                           nbrNodes,byrow=TRUE)
 
-    tau0[,readingOrder] <- tau0
+    # tau0[,readingOrder] <- tau0
     
     # Require a nbrNodes x Q matrix 
     tau <- t( tau0 )

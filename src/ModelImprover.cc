@@ -102,41 +102,6 @@ namespace ermg {
   }
 
 
-//   const vector<int> ModelImprover::notIncreasedLikelihood()
-//   {  
-//     vector<int> tmpnum_ed;
-//     for (int c=1; c<=_qmax-_qmin; c++){
-//       if (_ed_rep[c].incompleteLikelihoodApproximation()<_ed_rep[c-1].incompleteLikelihoodApproximation()){
-// 	tmpnum_ed.push_back( c );
-// #ifdef VERBOSE
-// 	cerr<<_qmin+c<<" not increase"<<endl;
-// #endif
-//       }
-//     }
-// #ifdef VERBOSE
-//     cerr<<tmpnum_ed.size()<<" notIncreased Likelihoods"<<endl;
-// #endif
-//     return tmpnum_ed;
-//   }
-  //
-//   const vector<int> ModelImprover::notConvexLikelihood()
-//   { 
-//     vector<int> tmpnum_ed;
-//     for (int c=1; c<_qmax-_qmin; c++){
-//       if ( (_ed_rep[c-1].incompleteLikelihoodApproximation()+_ed_rep[c+1].incompleteLikelihoodApproximation()
-// 	    - 2*_ed_rep[c].incompleteLikelihoodApproximation())>0 ){
-// 	tmpnum_ed.push_back( c );
-// #ifdef VERBOSE
-// 	cerr<<_qmin+c<<" not convex"<<endl;
-// #endif
-//       }
-//     }
-// #ifdef VERBOSE
-//     cerr<<tmpnum_ed.size()<<" notConvex Likelihoods"<<endl;
-// #endif
-//     return tmpnum_ed;
-//   }
-
   const vector<int> ModelImprover::notConvexLikelihood(ModelImproverLog& implog)
   { 
     vector<int> tmpnum_ed;
@@ -306,7 +271,7 @@ namespace ermg {
 
       niter++;
       implog.likeLog(_ed_rep);
-      //cerr<<implog;
+      cerr<<implog;
       //end = clock();
       //double elapsed = ((double)end - start) / CLOCKS_PER_SEC; /* Conversion en seconde */
       //cerr<<"#Time: "<<elapsed<<endl<<endl<<endl;
@@ -341,7 +306,9 @@ namespace ermg {
       }
       niter++;
       implog.likeLog(_ed_rep);
-      //cerr<<implog;
+#ifdef VERBOSE
+      cerr<<implog;
+#endif
       //end = clock();
       //double elapsed = ((double)end - start) / CLOCKS_PER_SEC; /* Conversion en seconde */
       //cerr<<"#Time: "<<elapsed<<endl<<endl<<endl;;
@@ -395,10 +362,7 @@ namespace ermg {
     ErmgDescriptor ed;
 
     int _snitermax;
-    // if dynamic_cast<SpecErmg*>(_ermg)
     _snitermax = 1;
-    //else
-    //_snitermax = SNITERMAX;
 
     bool statuquo = true;
     vector<int>::const_iterator tmpit = num_ed.begin();

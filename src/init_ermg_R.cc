@@ -50,9 +50,6 @@ extern "C" {
 		 int*    m,	// the list of edges
 		 double* tau) {
     
-    // ???
-    // srand((long)getpid());
-
     int                 q = *q_p; 
     int     improvenbiter = 0;
     int     emnbiter      = 0 ;

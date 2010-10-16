@@ -29,6 +29,7 @@ using namespace std;
 
 #include <sys/types.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <ModelImprover.h>
 #include <OCEm.h>
 #include <OEm.h>
@@ -55,9 +56,6 @@ extern "C" {
 		  int*    m,	        // the list of edges
 		  double* res){
 
-    // ??? srand((long)getpid());
-    printf("rANDOM : %d\n", rand() );
-    
     // GRAPH
     bool tosym = true;
     GraphReader gr(tosym, *loop);

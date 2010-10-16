@@ -34,9 +34,9 @@
 \author{G. Grasseau }
 \examples{
 
-graph.affiliation(n=100,c(1/3,1/3,1/3),0.8,0.2)->g
-mixer(g$x,qmin=2,qmax=6)->xout
-getModel( xout )
+graph.affiliation(n=100,c(1/3,1/3,1/3),0.8,0.2) -> g
+mixer(g$x,qmin=2,qmax=6) -> xout
+m <- getModel( xout )
 
 }
 \keyword{graphs}

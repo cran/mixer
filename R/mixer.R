@@ -1,56 +1,93 @@
 mixer<-function( x, qmin=2, qmax=NULL, method="variational",
-                 directed=NULL, nbiter=10, fpnbiter=5, improve=FALSE )
+                 directed=NULL, nbiter=10, fpnbiter=5, improve=FALSE, verbose=TRUE )
   {
 
-    
+
+  directed.save <- directed
+  
   ## How the graph is coded ?
-  if (is.character(x)){
+  if (is.character(x) & (length(x) == 1) ){
     ## spm file
     g <- new("spmgraph",x)
-    m <- getEdges(g)
-    
+    m.save <- getEdges(g)
+    m <- m.save
+    NodeName <- g@nodenames
+    NbrNodes <- max( m ) 
     if( is.null(directed) ) {
-      directed = is.symetric(m)
-      cat("Mixer: the edge list has been transformed to ")
-      if (directed) 
-        cat("a directed adjacency matrix\n")
-      else
-        cat("an undirected adjacency matrix\n")
-    }
+      directed = ! is.symetric(m)
+      if (verbose) {
+        cat("Mixer: the edge list has been transformed to ")
+        if (directed) 
+          cat("a directed adjacency matrix\n")
+        else
+          cat("an undirected adjacency matrix\n")
+      }
+    } 
     # Only connected nodes are in "m" 
-    # The nodes are renumbered 
-    ConnectedNodes <- as.numeric( names( g@nodeindexes ) )
+    # The nodes are renumbered
   } else if (dim(x)[1]==dim(x)[2]){
     ## Adjacency matrix
 
     if( is.null(directed) ) {
       directed <- (! is.symetric( x ) )
-      cat("Mixer: the edge list has been transformed in a ")
-      if (directed) 
-        cat("directed adjacency matrix\n")
-      else
-        cat("undirected adjacency matrix\n")
+      if (verbose) {
+        cat("Mixer: the adjacency matrix has been transformed in a ")
+        if (directed) 
+          cat("directed edge list\n")
+        else
+          cat("undirected edge list\n")
+      }
     }
-    ConnectedNodes  <- getConnectedNodes(x, directed=directed) 
-    m  <- AdjMat2Edges(x, directed=directed) 
-  } else {
+    NbrNodes <- dim(x)[1]
+    NodeName <- dimnames(x)[1]
+    m <- AdjMat2Edges(x, directed=directed, verbose=verbose)
+    m.save <- m
+  } else if( dim(x)[1] == 2) {
     ## Edge list
-    m <- x
-    directed <- (! is.symetric( m ) )
-    ConnectedNodes <- 1:max(m)
+        m <- x
+    NodeName <- getNodeName( m ) 
+    # To avoid index gap
+    NbrNodes <- length( NodeName )
+    m <- renumberNodes( m )
+    m.save <- m
+
+    if( is.null(directed) ) {
+      directed <- (! is.symetric( m ) )
+      if( verbose) {
+        cat("Mixer: the edge list has been transformed in a ")
+        if (directed) 
+          cat("directed one\n")
+        else
+          cat("undirected one\n")
+      }
+    }
+  } else {
+    cat("Mixer: not an adjacency matrix or bad edge list\n")
   }
 
-  nbrNodes <- max(m)  
 
-  ## How to find the proper order.....
-  readingOrder<-unique(as.numeric(m));
+  ## Get the mixnet node order
+  # Invalid : readingOrder<-unique(as.numeric(m));
+  if( !is.null( directed.save ) ) {
+    if( !(directed.save) & !(is.symetric( m )) ) {
+      cat("Mixer: unsymmetric matrix not suitable with directed=FALSE \n")
+      return(NULL)
+    }
+  }
   
+  # Get the mapping Mixnet -> initial Graph
+  Mixnet2Graph <- getMixnetNumbering( m )
+  m <- removeLoops( m )
+  m <- renumberNodes( m ) 
+
+  # NbrConnectedNodes : number of connected nodes
+  NbrConnectedNodes <- length( Mixnet2Graph )  
 
   ## prepare the arguments
   undirected<- !( directed) 
   loop<-FALSE
   kmeansnbclass<- 0   # Accelerate the initialization (used to start the HAC
-                      # (should be between NbrNodes and qmax)
+                      # (should be between NbrConnectedNodes and qmax)
   kmeansnbiter<-30    #  
   emeps<-1e-10        # tolerance for em (compare the likelihood)
   fpeps<-1e-4         # tolerance for the fixed point internal loop
@@ -79,7 +116,7 @@ mixer<-function( x, qmin=2, qmax=NULL, method="variational",
     qmax<-qmin
   }
 
-  if( length(ConnectedNodes) < qmax ) {
+  if( NbrConnectedNodes < qmax ) {
     stop("q-class value greater than the number of nodes.")
   } 
   
@@ -91,7 +128,7 @@ mixer<-function( x, qmin=2, qmax=NULL, method="variational",
   nbrICL     <- nbrClasses;         elts <- c(nbrICL)
   nbrAlphas  <- sum(span);          elts <- c(elts, nbrAlphas)
   nbrPis     <- sum(span*span);     elts <- c(elts, nbrPis)
-  nbrTaus    <- nbrNodes*nbrAlphas; elts <- c(elts, nbrTaus)
+  nbrTaus    <- NbrConnectedNodes*nbrAlphas; elts <- c(elts, nbrTaus)
   nbrValues  <- sum(elts)
 
   ##Chose the method for the parameter estimation
@@ -152,17 +189,35 @@ mixer<-function( x, qmin=2, qmax=NULL, method="variational",
       y[[j]]$alphas <- xout$res[cur:(cur-1+i)]; cur <- cur+i
       y[[j]]$Pis    <- matrix(xout$res[cur:(cur-1+(i*i))], i,i);
                        cur <- cur+(i*i)
-      y[[j]]$Taus   <- matrix(xout$res[cur:(cur-1+(i*nbrNodes))], i,
-                              nbrNodes,byrow=TRUE); cur <- cur+(i*nbrNodes)
-      y[[j]]$Taus[,readingOrder] <- y[[j]]$Taus
+
+      tmp <- matrix(xout$res[cur:(cur-1+(i*NbrConnectedNodes))], i,
+                              NbrConnectedNodes,byrow=TRUE);
+
+      # Invalid : y[[j]]$Taus[,readingOrder] <- y[[j]]$Taus
+      # replaced by :
+      
+      y[[j]]$Taus <- matrix( 0, i, NbrNodes ) 
+      y[[j]]$Taus[ , Mixnet2Graph[ ]] <- tmp[ ,  ]
+      
+      # y[[j]]$Taus   <- matrix(xout$res[cur:(cur-1+(i*NbrConnectedNodes))], i,
+      #                        NbrConnectedNodes,byrow=TRUE);
+      cur <- cur+(i*NbrConnectedNodes)
       j <- j+1
     }
-    result<-list(method=method,nnodes=nbrNodes, map=ConnectedNodes,
-                 edges=m,qmin=qmin,qmax=qmax,output=y,
+    result<-list(method=method,nnames=NodeName, nnodes=NbrNodes,
+                 map=Mixnet2Graph, edges=m.save,qmin=qmin,qmax=qmax,output=y,
                  directed=directed)
   } else {
-    result<-list(method=method,nnodes=nbrNodes,  map=ConnectedNodes,
-                 edges=m,qmin=qmin,qmax=qmax,output=bout,
+    j <- 1
+    for (i in span){
+      tmp <- bout[[j]]$Taus 
+      bout[[j]]$Taus <- matrix( 0, i, NbrNodes ) 
+      bout[[j]]$Taus[ , Mixnet2Graph[ ]] <- tmp[ ,  ]
+      j <- j+1
+    }
+    
+    result<-list(method=method, nnames=NodeName, nnodes=NbrNodes,
+                 map=Mixnet2Graph, edges=m.save, qmin=qmin, qmax=qmax, output=bout,
                  directed=directed)
   }
   class(result)<-"mixer"
@@ -241,7 +296,9 @@ plotmixture<-function(degrees,Pis,alphas,n, directed=FALSE){
     colSums(Pis*alphas)*(2*n-2)->lambdaq
   else
     colSums(Pis*alphas)*(n-1)->lambdaq
-    
+
+  # Remove unconnected nodes
+  degrees <- degrees[ which( degrees != 0) ]
   min(degrees):max(degrees)->x
   mixture(x,alphas,lambdaq)->y
   histo<-hist(degrees,plot=FALSE)
@@ -256,7 +313,7 @@ plotmixture<-function(degrees,Pis,alphas,n, directed=FALSE){
 ############################################################
 is.mixer<-function(x){if (class(x)=="mixer") TRUE else FALSE}
 
-plot.mixer<-function(x, q=NULL, frame=1:4, classes=NULL, quantile.val=0.1, ...){  
+plot.mixer<-function(x, q=NULL, frame=1:4, classes=NULL, classes.col=NULL, quantile.val=0.1, ...){  
 
   # Test x
   if (!is.mixer( x ))
@@ -311,9 +368,13 @@ plot.mixer<-function(x, q=NULL, frame=1:4, classes=NULL, quantile.val=0.1, ...){
     q<-length(mixer.res$output[[i]]$alphas)
   }
 
-  apply(mixer.res$output[[q-mixer.res$qmin+1]]$Taus,2,which.max)->cluster
-  Pis<-mixer.res$output[[q-mixer.res$qmin+1]]$Pis
-  alphas<-mixer.res$output[[q-mixer.res$qmin+1]]$alphas
+  index <- q-mixer.res$qmin+1
+  apply(mixer.res$output[[index]]$Taus,2,which.max)->cluster
+  # Not connected nodes
+  cluster[ (colSums( mixer.res$output[[index]]$Taus ) == 0 ) ] <- -1
+  
+  Pis    <- mixer.res$output[[q-mixer.res$qmin+1]]$Pis
+  alphas <- mixer.res$output[[q-mixer.res$qmin+1]]$alphas
 
   # Frames to display
   nb.col <- 2
@@ -337,12 +398,15 @@ plot.mixer<-function(x, q=NULL, frame=1:4, classes=NULL, quantile.val=0.1, ...){
   if( 3 %in% frame ){
     Degrees <- rep( 0, mixer.res$nnodes )
     for ( i in 1:dim(mixer.res$edges)[2] ) {
-      node = mixer.res$edges[1, i]
-      Degrees[ node ] = Degrees[ node ] + 1
-      node = mixer.res$edges[2, i]
-      Degrees[ node ] = Degrees[ node ] + 1
+      # Remove loops
+      if( mixer.res$edges[1, i] != mixer.res$edges[2, i] ) {
+        node = mixer.res$edges[1, i]
+        Degrees[ node ] = Degrees[ node ] + 1
+        node = mixer.res$edges[2, i]
+        Degrees[ node ] = Degrees[ node ] + 1
+      }
     }
-    plotmixture( Degrees, Pis, alphas, mixer.res$nnodes, mixer.res$directed  ) 
+    plotmixture( Degrees, Pis, alphas, length( mixer.res$map ), mixer.res$directed  ) 
   }
   if( 4 %in% frame ){
     if( !is.null( classes ) ) {
@@ -358,10 +422,14 @@ plot.mixer<-function(x, q=NULL, frame=1:4, classes=NULL, quantile.val=0.1, ...){
       pie.coef = NULL
     }
     Gplot( Pis, type="pie.nodes", node.weight=alphas, node.pie.coef=pie.coef,
-           quantile.val = quantile.val, main="Inter/intra class probabilities" )
+           quantile.val = quantile.val, colors=classes.col,
+           main="Inter/intra class probabilities",
+          ... )
   }
   if( 5 %in% frame )
-    Gplot( mixer.res$edges, class=cluster, main="Graph", directed=x$directed )
+    Gplot( mixer.res$edges, class=cluster, colors=classes.col,
+          main="Graph", directed=x$directed,
+          ... )
     
   par( mfrow=c(1, 1) )
 }
@@ -468,21 +536,20 @@ randError<-function(x, y) {
 ##############################################################
 #  transform of an adjacency matrix  into an array of edges  
 ##############################################################
-AdjMat2Edges<-function(x, directed=FALSE ) {
+AdjMat2Edges<-function(x, directed=FALSE, verbose=TRUE ) {
   
   if (dim(x)[1] == dim(x)[2]){
     
     # Adjacency matrix case
     nbrNodes<-dim(x)[1]
-    NotConnected <- which( (rowSums( x ) + colSums(x)) == 0)
-    if ( length(NotConnected) > 0 ) {
-      x <- x[ - NotConnected, - NotConnected ]
-       cat("Mixer: some nodes are not connected to the network \n")
-    } 
+    ConnectedNodes <- getConnectedNodes( x )
+    # if ( length(ConnectedNodes) > 0 ) {
+    #  x <- x[ ConnectedNodes, ConnectedNodes ]
+    # } 
     if ( directed ) {
       m <- t( which( (x==1) , arr.ind=TRUE) )
     } else {
-      m <- t( which( (x==1) & (upper.tri(x)), arr.ind=TRUE) )
+      m <- t( which( (x==1) & (upper.tri(x, diag=TRUE)), arr.ind=TRUE) )
     }
   }
 
@@ -490,19 +557,42 @@ AdjMat2Edges<-function(x, directed=FALSE ) {
 }
 
 ##############################################################
+#  Return the edge list or adjacency matrix without loops
+##############################################################
+removeLoops<-function(x, adj=FALSE) {
+   if (adj){
+     ## Adjacency matrix
+     diag(x) <- 0
+   } else if ( dim(x)[1] == 2) {
+     ## Edge list
+     ilist <- which( x[1,] != x[2,])
+     if( length(ilist) != 0) {
+       x <-  as.matrix( x[ , ilist] )
+     }
+   } else {
+     cat("Mixer: removeLoops not an adjacency matrix nor edge list\n")
+   }
+
+   return( x )
+ }
+
+##############################################################
 #  Return the index list of connected nodes 
 ##############################################################
-getConnectedNodes<-function(x, directed=FALSE ) {
+getConnectedNodes<-function( x ) {
+
   
   if (dim(x)[1] == dim(x)[2]){
     
     # Adjacency matrix case
     nbrNodes<-dim(x)[1]
-    NotConnected <- which( (rowSums( x ) + colSums(x)) == 0)
-    ConnectedNodes <- 1:nbrNodes
-    if ( length(NotConnected) > 0 ) {
-      ConnectedNodes = ConnectedNodes[  - NotConnected ]
-    } 
+    ConnectedNodes <- which( (rowSums( x ) + colSums(x)) != 0)
+
+  }
+  else if ( dim(x)[1] == 2) {
+    ConnectedNodes = unique( as.vector( x ) )
+  } else {
+    cat("Mixer: getConnectedNodes not an adjacency matrix nor edge list\n")
   }
   return( ConnectedNodes )
 }
@@ -559,3 +649,97 @@ getModel.mixer <- function( object, ...) {
   return( res ) 
 
 }
+
+##############################################################
+# Return tke mapping.
+# 'x[2, nbedges]' edge list
+##############################################################
+getMixnetNumbering <- function(x) {
+
+  NodeList <- vector()
+  NbEdges <- dim(x)[2]
+  n.nodes <- 0
+  for ( i in 1:NbEdges ) {
+
+    if(  x[1,i] != x[2,i] ) {
+
+      # Add in the node list if a new one
+      if ( !( x[1, i] %in% NodeList ) ) {
+        n.nodes <- n.nodes+1
+        NodeList[n.nodes] <-  x[1, i]  
+      }
+
+      if ( !( x[2,i] %in% NodeList ) ) {
+        n.nodes <- n.nodes+1
+        NodeList[n.nodes] <-  x[2,i]  
+      }
+    }
+  }
+  
+  # Return the mapping Mixnet to the initial graph 'x'
+  return( NodeList)
+}
+
+##############################################################
+# Renumber the nodes.
+# 'x[2, nbedges]' edge list
+##############################################################
+renumberNodes <- function( x ) {
+
+  NodeList <- vector()
+  NbEdges <- dim(x)[2]
+  n.nodes <- 0
+  res <- matrix( 0, dim(x)[1],  dim(x)[2])
+  for ( i in 1:NbEdges ) {
+
+    # Add in the node list if a new one
+    if ( !( x[1, i] %in% NodeList ) ) {
+      n.nodes <- n.nodes+1
+      NodeList[n.nodes] <-  x[1, i]
+       res[1, i] <- n.nodes
+    } else {
+       res[1, i] <- which( NodeList == x[1, i] )
+    }
+
+    if ( !( x[2,i] %in% NodeList ) ) {
+      n.nodes <- n.nodes+1
+      NodeList[n.nodes] <-  x[2,i]  
+      res[2, i] <- n.nodes
+    } else {
+      res[2, i] <- which( NodeList == x[2, i] )
+    }
+  }
+  
+  # Return the mapping Mixnet to the initial graph 'x'
+  return( res )
+
+}
+
+##############################################################
+# getNodeNames
+# 'x[2, nbedges]' edge list
+##############################################################
+getNodeName <- function( x ) {
+
+  NodeName <- vector()
+  NbEdges <- dim(x)[2]
+  n.nodes <- 0
+  for ( i in 1:NbEdges ) {
+
+    # Add in the node list if a new one
+    if ( !( x[1, i] %in% NodeName ) ) {
+      n.nodes <- n.nodes+1
+      NodeName[n.nodes] <-  x[1, i]
+    }
+
+    if ( !( x[2,i] %in% NodeName ) ) {
+      n.nodes <- n.nodes+1
+      NodeName[n.nodes] <-  x[2,i]  
+    }
+  }
+  
+  # Return the mapping Mixnet to the initial graph 'x'
+  return( NodeName )
+
+}
+
