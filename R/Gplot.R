@@ -167,7 +167,7 @@ Gplot.default <- function ( X, ... ) {
   
   # Set "directed" parameter when not specified
   if ( is.null( directed ) ) {
-    symetric <- (is.symetric(X, eps=1.0e-3))
+    symetric <- (is.symmetric(X, eps=1.0e-3))
     if ( symetric ) {
        X[lower.tri(X)] <- 0
        directed <- FALSE
@@ -385,7 +385,7 @@ Gplot.pie.nodes <- function ( Mat,
   pie.col <- -1
   # Set "directed" parameter when not specified
   if ( is.null( directed ) ) {
-    symetric <- (is.symetric(Mat, eps=1.e-6) )
+    symetric <- (is.symmetric(Mat, eps=1.e-6) )
     if ( symetric ) {
        Mat[lower.tri(Mat)] <- 0
        directed <- FALSE
@@ -624,7 +624,7 @@ sub.param <- function (param, default=NULL, ... ) {
 
 }
 
-is.symetric <- function( X, eps=0 ) {
+is.symmetric <- function( X, eps=0 ) {
   
   if ( dim(X)[1] != dim(X)[2]) {
     # Matrix of edges

@@ -99,15 +99,18 @@ namespace ermg {
 	//std::cerr<<"0 ";
 	//}
 	if (fullDiagonal(i)){
-	  sum += sqrt(s-1)*vecin[i]; // degree
+	  // GG Nov-2010
+	  // sum += sqrt(s-1)*vecin[i]; // degree
+	  sum += sqrt( static_cast<double> (s-1) )*vecin[i]; // degree
 	  //sum += (s-1)*vecin[i]; // degree
 	  //std::cerr<<s-1<<" ";
 	  pos++;
 	  it_l++;
 	}
-	else{
-	  sum += sqrt(s)*vecin[i]; // degree
-	  //sum += s*vecin[i]; // degree
+	else{	  
+	  // GG Nov-2010
+	  // sum += sqrt(s)*vecin[i]; // degree
+	  sum += sqrt( static_cast<double> (s) )*vecin[i]; // degree
 	}
 	    
 	ind1=i;

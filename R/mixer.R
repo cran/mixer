@@ -3,8 +3,6 @@ mixer<-function( x, qmin=2, qmax=NULL, method="variational",
   {
 
 
-  directed.save <- directed
-  
   ## How the graph is coded ?
   if (is.character(x) & (length(x) == 1) ){
     ## spm file
@@ -14,7 +12,7 @@ mixer<-function( x, qmin=2, qmax=NULL, method="variational",
     NodeName <- g@nodenames
     NbrNodes <- max( m ) 
     if( is.null(directed) ) {
-      directed = ! is.symetric(m)
+      directed = ! is.symmetric(m)
       if (verbose) {
         cat("Mixer: the edge list has been transformed to ")
         if (directed) 
@@ -22,14 +20,19 @@ mixer<-function( x, qmin=2, qmax=NULL, method="variational",
         else
           cat("an undirected adjacency matrix\n")
       }
-    } 
+    } else  if( !(directed) & !(is.symmetric( m )) ) {
+      cat("Mixer: unsymmetric matrix not suitable with directed=FALSE \n")
+      return(NULL)
+    }
+      
     # Only connected nodes are in "m" 
     # The nodes are renumbered
   } else if (dim(x)[1]==dim(x)[2]){
-    ## Adjacency matrix
 
+    ## Adjacency matrix
+    ##
     if( is.null(directed) ) {
-      directed <- (! is.symetric( x ) )
+      directed <- (! is.symmetric( x ) )
       if (verbose) {
         cat("Mixer: the adjacency matrix has been transformed in a ")
         if (directed) 
@@ -37,7 +40,11 @@ mixer<-function( x, qmin=2, qmax=NULL, method="variational",
         else
           cat("undirected edge list\n")
       }
+    } else if( !(directed) & !(is.symmetric( x )) ) {
+      cat("Mixer: unsymmetric matrix not suitable with directed=FALSE \n")
+      return(NULL)
     }
+    
     NbrNodes <- dim(x)[1]
     NodeName <- dimnames(x)[1]
     m <- AdjMat2Edges(x, directed=directed, verbose=verbose)
@@ -52,7 +59,7 @@ mixer<-function( x, qmin=2, qmax=NULL, method="variational",
     m.save <- m
 
     if( is.null(directed) ) {
-      directed <- (! is.symetric( m ) )
+      directed <- (! is.symmetric( m ) )
       if( verbose) {
         cat("Mixer: the edge list has been transformed in a ")
         if (directed) 
@@ -60,6 +67,9 @@ mixer<-function( x, qmin=2, qmax=NULL, method="variational",
         else
           cat("undirected one\n")
       }
+    } else if( !(directed) & !(is.symmetric( m )) ) {
+      cat("Mixer: unsymmetric matrix not suitable with directed=FALSE \n")
+      return(NULL)
     }
   } else {
     cat("Mixer: not an adjacency matrix or bad edge list\n")
@@ -68,12 +78,6 @@ mixer<-function( x, qmin=2, qmax=NULL, method="variational",
 
   ## Get the mixnet node order
   # Invalid : readingOrder<-unique(as.numeric(m));
-  if( !is.null( directed.save ) ) {
-    if( !(directed.save) & !(is.symetric( m )) ) {
-      cat("Mixer: unsymmetric matrix not suitable with directed=FALSE \n")
-      return(NULL)
-    }
-  }
   
   # Get the mapping Mixnet -> initial Graph
   Mixnet2Graph <- getMixnetNumbering( m )

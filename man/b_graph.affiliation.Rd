@@ -1,4 +1,3 @@
-\encoding{latin1}
 \name{graph.affiliation}
 \alias{graph.affiliation}
 \title{Simulation of an Affiliation Graph}
