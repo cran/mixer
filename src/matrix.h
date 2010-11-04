@@ -28,6 +28,8 @@
 # include <cstring>
 # include <cmath>
 # include <cfloat>
+# include <string.h>
+# include <math.h>
 # include "util.h"
 
 # ifndef _MATRIX_H_
@@ -1166,7 +1168,7 @@ Matrix inline log( const Matrix &A ) {
   double *tab = new double [ row * col ];
   const double *mat_ = A.getData();
   for (size_t i=0; i < row*col; i++) {
-    tab[i] = log( mat_[i] );
+    tab[i] = std::log( mat_[i] );
   }
   Matrix tmp(row, col, tab, false);
 
@@ -1180,7 +1182,7 @@ Matrix inline exp( const Matrix &A ) {
   double *tab = new double [ row * col ];
   const double *mat_ = A.getData();
   for (size_t i=0; i < row*col; i++) {
-    tab[i] = exp( mat_[i] );
+    tab[i] = std::exp( mat_[i] );
   }
   Matrix tmp(row, col, tab, false);
 

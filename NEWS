@@ -1,7 +1,10 @@
 NEWS/Changelog
 
+1.5	(2010-11-04)
+    +   Fix compilation errors on Solaris OS.
+
 1.4	(2010-11-02)
-    +   Fixe problem with simone package.
+    +   Fix problem with simone package.
 
 1.3	(2010-10-25)
     +   Updating of mixnet C library (mixnet-1.1.2-p1)
