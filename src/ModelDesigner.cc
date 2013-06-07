@@ -33,17 +33,17 @@ namespace ermg {
 
   void ModelDesigner::load(const vector<int>& inputclasses)
   {    	      
-    if (!_silent)
-      cout<<"Initializing classes...\t"<< flush; 
+   
+
     _curr_ermg.replaceCahForSubXadjByLoad(inputclasses);      
-    if (!_silent)
-      cout<<"done"<<endl;
+   
+
   }
   
   void ModelDesigner::initialRandom(int n_init)
   {   	      
-    if (!_silent)
-      cout<<"Random "<< flush;
+   
+
     vector<int> randomclasses(_curr_ermg.nbVertices(), -1);
     for (int i=0; i<n_init; i++)
       randomclasses[i] = int(double(rand())/double(RAND_MAX)*_q);
@@ -53,17 +53,14 @@ namespace ermg {
 
   void ModelDesigner::em(EmCore& em)
   {      
-    if (!_silent)
-      cout<<"\rEM for Q="<<_q<<"...\t"<< flush;
+   
     _curr_ermg.em(em, _q);      
-    if (!_silent)
-      cout<<"done"<<endl;
+   
   }
   
   void ModelDesigner::outFile(const string& ofile, const Graph *g, const string& odir )
   {
-    if (!_silent)
-      cout<<"Saving...\t"<< flush; 
+
       _curr_ermg.outFile( ofile, g, odir );
       
     stringstream strout;
@@ -85,8 +82,7 @@ namespace ermg {
     fout<<"# Q="<<_q
 	<<" ICL:\n"<<_curr_ermg.ICL()<<endl;    
     fout.close(); 
-    if (!_silent)
-      cout<<"done"<<endl; 
+
   }
 
 

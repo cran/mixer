@@ -1,4 +1,6 @@
 NEWS/Changelog
+1.6	(2013-06-07)
+    +	Remove C and Fortran functions that could cause R to terminate. Use packageStartupMessage for startup functions
 
 1.5	(2010-11-04)
     +   Fix compilation errors on Solaris OS.

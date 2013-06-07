@@ -294,7 +294,7 @@ Gplot.default <- function ( X, ... ) {
                          coord           = coord
                        )
     if( ! no.edge ) 
-      gr <- Gplot.edge( gr,
+      gr <- Gplot.edgeMIXER( gr,
                        col       = e.col,
                        lty       = e.lty,
                        lwd       = lwd,
@@ -533,7 +533,7 @@ Gplot.pie.nodes <- function ( Mat,
                            cex = (sqrt( node.weight )*10), display=FALSE )
 
    if( ! no.edge )
-     gr <- Gplot.edge( gr,
+     gr <- Gplot.edgeMIXER( gr,
                       col        = "blue",
                       lty        = e.lty,
                       lwd        = e.lwd,

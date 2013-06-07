@@ -201,8 +201,6 @@ namespace ermg {
   void Ermg::merge()
   {
     if (_q<3){
-      cerr<<"Merge impossible with only "<<_q<<" classes"<<endl;
-      exit(1);
     }   
     _kmeans_nbclass = _q; 
   
@@ -215,7 +213,6 @@ namespace ermg {
       this->cah();
     }
     else{
-      cerr<<"Merge warning: a single class assigned for all the vertices"<<endl;
       _save_class.clear();
       _class.assign(_n,0);
       _save_class.push_back(_class);
@@ -239,7 +236,6 @@ namespace ermg {
     constructClassFromTau(true);
 #ifdef VERBOSE
     constructCardinalFromClass();
-    cerr<<cselect<<" of cardinal "<<_cardinal_class[cselect]<<" ";
 #endif
     // filling concerned
     _kmeans_concerned_classes.clear();
@@ -265,7 +261,6 @@ namespace ermg {
     // Focus on the second vp
     SparseMatrix< int, std::vector<int> > subXadj(_Xadj, _kmeans_concerned_vertices);
     //_Xadj.stderrPrint();
-    //cerr<<endl;
     //subXadj.stderrPrint();
     vector<double>& vp = subXadj.secondEigenVector();
     if (!vp.empty()){
@@ -330,10 +325,6 @@ namespace ermg {
     }
     this->kmeansNormalizeBarycentersAndConvergency(false);
 #ifdef VERBOSE
-    cerr<<"Entropy :"<<entropy<<endl;
-    cerr<<"=====> KMeans cardinal class"<<endl;
-    copy(_cardinal_class.begin(),_cardinal_class.end(),ostream_iterator<int>(cerr, " "));
-    cerr<<endl;
 #endif
 
     // next  
@@ -348,26 +339,17 @@ namespace ermg {
       }
       niter++;
 #ifdef VERBOSE
-      cerr<<"Entropy :"<<entropy<<endl;
-      cerr<<"=====> KMeans cardinal class"<<endl;
-      copy(_cardinal_class.begin(),_cardinal_class.end(),ostream_iterator<int>(cerr, " "));
-      cerr<<endl; 
 #endif 
     } 
     while((this->kmeansNormalizeBarycentersAndConvergency(true)==false) && (niter<_kmeans_nitermax));
 #ifdef VERBOSE
-    cerr<<"Niter kmeans: "<<niter<<endl;
 #endif 
     this->kmeansSwitchBarycenters();
 
 
 #ifdef VERBOSE
-    cerr<<"KMeans class"<<endl;
     for (int i=0; i<int(_kmeans_concerned_vertices.size()); i++)
-      cerr<<i<<" => "<<_class[i]<<endl;; 
-    cerr<<"Cardinal"<<endl;
     for (int c=0; c<_kmeans_nbclass; c++)
-      cerr<<"class "<<_kmeans_concerned_classes[c]<<" : "<<_cardinal_class[c]<<endl;  
 #endif  
   }
 
@@ -452,10 +434,7 @@ namespace ermg {
       selected[c] = _kmeans_concerned_vertices[ int( (c+tmpcoeff)*step ) ];
     }
 #ifdef VERBOSE      
-    cerr<<"Vertices selected: ";
     for (int c=0; c<_kmeans_nbclass; c++)
-      cerr<<selected[c]<<" ";
-    cerr<<endl;
 #endif
   }
 
@@ -576,8 +555,6 @@ namespace ermg {
     vector<int> aux(_n, -1);
     int m = *max_element(inputclass.begin(), inputclass.end());
     if ( m>(_cah_minnbclass-1) ){
-      cerr<<"Error: in input class file, the classes goes from 0 to "<<m<<"  >= "<<_cah_minnbclass<<" classes"<<endl;
-      exit(1);
     }
     copy(inputclass.begin(), inputclass.end(), aux.begin());
     //copy(inputclass.begin(), inputclass.end(), std::ostream_iterator<int>(cout, "\t"));
@@ -638,7 +615,6 @@ namespace ermg {
 
       // if a single class 
       if ((min_c1==0) && (min_c2==0)){
-	cerr<<"Hierarchical Clustering warning: a single class assigned for all the vertices"<<endl;
 	this->cahSingleClass();
       }
       else{
@@ -663,7 +639,6 @@ namespace ermg {
 	int card1 = _cardinal_class[min_c1];
 	int card2 = _cardinal_class[min_c2];
 #ifdef VERBOSE	
-	cerr<<min_c1<<" and "<<min_c2<<" of cardinal "<<card1<<" and "<<card2<<" ";
 #endif  
 	this->cahUpdateBarycenters(min_c1, card1, min_c2, card2);
       
@@ -717,10 +692,7 @@ namespace ermg {
       _save_class.push_back( _class );
 
 #ifdef VERBOSE 
-    cerr<<"Constructed Class from Tau:"<<endl;
     for (int i=0; i<_n; i++)
-      cerr<<_class[i]<<" ";
-    cerr<<endl; 
 #endif  
   }
 
@@ -804,10 +776,7 @@ namespace ermg {
       cardinal_class[imax]++;
     } 
 
-    cerr<<"Cardinal"<<endl;
     for (int c=0; c<ermg._q; c++)
-      cerr<<"class "<<c<<" : "<<cardinal_class[c]<<endl; 
-    cerr<<endl;
 #endif  
     return out; 
   }
@@ -989,8 +958,6 @@ void Ermg::inFile(const std::string& ifile)
   std::ifstream fin;
   fin.open(ifile.c_str(), std::ios::in);
   if (!fin.is_open()){
-    std::cerr<<"Unable to open "<<ifile.c_str()<<std::endl;
-    exit(1);
   }
   fin>>*this;
   fin.close();

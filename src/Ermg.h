@@ -245,8 +245,6 @@ namespace ermg {
 
     //! error file message
     void errFormatFile(){
-      std::cerr<<"Error format file"<<std::endl;
-      exit(1);
     }
 
     //! forbidden default constructor

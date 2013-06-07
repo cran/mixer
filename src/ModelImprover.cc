@@ -51,38 +51,26 @@ namespace ermg {
 	_curr_ermg.cahInitNoKmeans();
       }
       else{
-	if (!_silent)
-	  cout<<"K-means...\t"<<flush; 
+
 	_curr_ermg.kmeans();
-	if (!_silent)
-	  cout<<"done"<<endl;
+
       } 
-      if (!_silent)
-	cout<<"Hierarchical Clustering...\t\t"<<flush; 
+
       _curr_ermg.cah();
-      if (!_silent)
-	cout<<"done"<<endl;
+
     }
     else{
-      if (!_silent)
-	cout<<"Hierarchical Clustering ...\t\t"<<flush; 
+
       _curr_ermg.cahForSubXadj( em.requiredNumberOfInitializedVertices() );      
-      if (!_silent)
-	cout<<"done"<<endl;
+
     }
   
     for (int c=_qmin; c<=_qmax; c++){ 
-      if (!_silent)	
-	cout<<"\rEM for Q="<<c<< flush; 
+
       _curr_ermg.em( em, c );
       _curr_ermg.saveTo( _ed_rep[c-_qmin] );      
     }
-    if (!_silent)
-      cout<<"\rEM for Q="
-	<<_qmin
-	<<" to "
-	<<_qmax
-	<<"...\tdone"<<endl;
+
   }
 
 
@@ -92,12 +80,10 @@ namespace ermg {
     for (int c=_qmin; c<=_qmax; c++){ 
       stringstream strin;
       strin<<idir<<"/"<<spmfile.substr(islash+1, spmfile.size()-4-islash-1)<<"_Q"<<c<<".model";
-      if (!_silent)	
-	cout<<"Loading "<<strin.str()<<"...\t"<< flush; 
+
       _curr_ermg.inFile( strin.str() );
       _curr_ermg.saveTo( _ed_rep[c-_qmin] );      
-      if (!_silent)
-	cout<<"done"<<endl;
+
     }
   }
 
@@ -112,9 +98,7 @@ namespace ermg {
       int kmax = c+1;
       for (int k=c+1; k<=cm; k++){
 	double pk = (_ed_rep[k].incompleteLikelihoodApproximation()-_ed_rep[c].incompleteLikelihoodApproximation()) / (k-c);
-	// 	cerr<<"between "<<c+1<<" and "<<k+1<<": "<<
-	// 	  _ed_rep[k].incompleteLikelihoodApproximation()<<"-"<<_ed_rep[c].incompleteLikelihoodApproximation()<<"/"
-	// 	    <<(k-c)<<"="<<pk<<endl;
+
 	if (pk>max){
 	  kmax = k;
 	  max = pk;
@@ -122,10 +106,10 @@ namespace ermg {
       }
       implog.inenvelopeLog(c);
       implog.inenvelopeLog(kmax);
-      //      cerr<<c+1<<" and "<<kmax+1<<" in envelope"<<endl;
+
       for (int k=c+1; k<kmax; k++){
 #ifdef VERBOSE
-	cerr<<_qmin+k<<" not convex"<<endl;
+
 #endif
 	tmpnum_ed.push_back(k);
       }
@@ -138,8 +122,7 @@ namespace ermg {
 
   void ModelImprover::improveLikelihoodsSpeed(EmCore& em)
   { 
-    if (!_silent)
-      cout<<"Improvement...\t"<< flush;
+
     int cm = _qmax-_qmin;
     vector<int> candidate(1,0);
     int niter = 0;
@@ -149,8 +132,7 @@ namespace ermg {
       //clock_t start, end;
       //start = clock();
       ModelImproverLog implog(_qmin, _qmax);
-      if (!_silent)
-	cout<<"\rImprovement...\t"<<niter+1<<flush;
+
       statuquo = true;	
       bool mstatuquo, sstatuquo; 
       int c=0;
@@ -187,7 +169,7 @@ namespace ermg {
 	      diffmax = diff;
 	      kselect = k;
 #ifdef VERBOSE
-	      cerr<<_qmin+k<<" not increase"<<endl;
+
 #endif	    
 	    }
 	  }
@@ -209,19 +191,19 @@ namespace ermg {
 	    double dmax = 0;
 	    for (int k=c+1; k<kmax; k++){
 	      #ifdef VERBOSE
-	      cerr<<_qmin+k<<" not convex"<<endl;
+
 	      #endif
 	      double y3 = _ed_rep[k].incompleteLikelihoodApproximation();
 	      int x3 = k;
 	      double d = abs( (a*x3+b*y3+cste)/sqrt(a*a+b*b) );
-	      //cerr<<"distance: "<<d<<endl;
+
 	      if (d>dmax){
 		dmax = d;
 		kselect = k;
 	      }
 	    }
 	    #ifdef VERBOSE
-	    cerr<<_qmin+kselect<<" is the most away from the envelope"<<endl;
+
 	    #endif
 	    if ( (_imove_usedtomerge[kselect+1] == _imove[kselect+1])
 		 &&(_imove_usedtosplit[kselect-1] == _imove[kselect-1]) ){
@@ -232,7 +214,7 @@ namespace ermg {
 		krand++;
 	      }
 	      #ifdef VERBOSE
-	      cerr<<"Random replacement of "<<kselect+1;
+
 	      #endif
 	      if (c+krand>=kselect)
 		kselect = c+krand+1;
@@ -240,12 +222,12 @@ namespace ermg {
 		kselect = c+krand;
 	      implog.randomstatusLog(kselect);
 	      #ifdef VERBOSE
-	      cerr<<" by "<<kselect+1<<endl;
+
 	      #endif
 	    }
 	    else{
 	      #ifdef VERBOSE
-	      cerr<<"No random replacement of "<<kselect+1<<endl;
+
 	      #endif
 	      implog.selectstatusLog(kselect);
 	    }
@@ -271,20 +253,15 @@ namespace ermg {
 
       niter++;
       implog.likeLog(_ed_rep);
-      cerr<<implog;
-      //end = clock();
-      //double elapsed = ((double)end - start) / CLOCKS_PER_SEC; /* Conversion en seconde */
-      //cerr<<"#Time: "<<elapsed<<endl<<endl<<endl;
+
     } while( (!statuquo)&&(niter<_nitermax) );    
   
-    if (!_silent)
-      cout<<"\rImprovement...\tdone                          "<<endl;   
+
   }
    
   void ModelImprover::improveLikelihoods(EmCore& em)
   {  
-    if (!_silent)
-      cout<<"Improvement...\t"<< flush; 
+
     int niter;
     bool statuquo;
     vector<int> candidate(1,0);
@@ -293,8 +270,7 @@ namespace ermg {
       //clock_t start, end;
       //start = clock();
       ModelImproverLog implog(_qmin, _qmax);
-      if (!_silent)
- 	cout<<"\rImprovement...\t"<<niter+1<<flush;
+
       statuquo = true; 
       vector<int> num_ed =  this->notConvexLikelihood(implog);
       for (vector<int>::iterator it=num_ed.begin(); it!=num_ed.end(); it++){
@@ -307,15 +283,14 @@ namespace ermg {
       niter++;
       implog.likeLog(_ed_rep);
 #ifdef VERBOSE
-      cerr<<implog;
+
 #endif
       //end = clock();
       //double elapsed = ((double)end - start) / CLOCKS_PER_SEC; /* Conversion en seconde */
-      //cerr<<"#Time: "<<elapsed<<endl<<endl<<endl;;
+
     } while( (!statuquo)&&(niter<_nitermax) );    
     
-    if (!_silent)
-      cout<<"\rImprovement...\tdone                          "<<endl;   
+
   }    
 
   bool ModelImprover::mergeStrategy(EmCore& em, const vector<int>& num_ed, ModelImproverLog& implog)
@@ -327,7 +302,7 @@ namespace ermg {
 
       if (*tmpit+1<=(_qmax-_qmin)){
 #ifdef VERBOSE
-	cerr<<"merging Q="<<_qmin+ *tmpit+1<<" ";
+
 #endif
 	if (_imove_usedtomerge[*tmpit+1] != _imove[*tmpit+1]){
 	  _imove_usedtomerge[*tmpit+1] = _imove[*tmpit+1];
@@ -336,7 +311,7 @@ namespace ermg {
 	  _curr_ermg.em( em, _curr_ermg.nbClasses() );
 	  if ( (_curr_ermg.incompleteLikelihoodApproximation()-_ed_rep[*tmpit].incompleteLikelihoodApproximation())>PRECISION ){	    
 #ifdef VERBOSE
-	    cerr<<"accepted"<<endl;
+
 #endif
 	    statuquo = false;
 	    _curr_ermg.saveTo( _ed_rep[*tmpit] );	  
@@ -344,13 +319,13 @@ namespace ermg {
 	  }
 #ifdef VERBOSE
 	  else
-	    cerr<<"rejected"<<endl;
+
 #endif 
 	  implog.mergeLog(statuquo, *tmpit);
 	}
 #ifdef VERBOSE
 	else 
-	  cerr<<" previously done"<<endl;
+
 #endif 
       }  
     }
@@ -369,7 +344,7 @@ namespace ermg {
     for (;tmpit!=num_ed.end();tmpit++){
       if (*tmpit-1>=0){
 #ifdef VERBOSE
-	cerr<<"spliting Q="<<_qmin+ *tmpit-1<<" ";
+
 #endif
 	if (_imove_usedtosplit[*tmpit-1] != _imove[*tmpit-1]){
 	  _imove_usedtosplit[*tmpit-1] = _imove[*tmpit-1];
@@ -402,7 +377,7 @@ namespace ermg {
 	  _curr_ermg.em( em, _curr_ermg.nbClasses() );	  
 	  if ( (_curr_ermg.incompleteLikelihoodApproximation()-ilikea)>PRECISION ){
 #ifdef VERBOSE
-	    cerr<<"accepted"<<endl;
+
 #endif
 	    statuquo = false;
 	    _curr_ermg.saveTo( _ed_rep[*tmpit] );
@@ -410,13 +385,13 @@ namespace ermg {
 	  }
 #ifdef VERBOSE
 	  else
-	    cerr<<"rejected"<<endl;
+
 #endif 
 	  implog.splitLog(statuquo, *tmpit);	  
 	}
 #ifdef VERBOSE
 	else 
-	  cerr<<" previously done"<<endl;
+
 #endif 
       }
     }
@@ -426,17 +401,12 @@ namespace ermg {
 
   void ModelImprover::printLikelihoods()
   {
-    if (!_silent)
-      for (int c=0; c<=_qmax-_qmin; c++)
-	cout<<"# incomplete Likelihood Approximation"<<endl
-	    <<_qmin+c<<"\t"<<_ed_rep[c].incompleteLikelihoodApproximation()<<endl;
-    cout<<endl<<endl;
+
   }
 
   void ModelImprover::outFile(const string& ofile, const Graph *g, const string& odir )
   {
-    if (!_silent)
-      cout<<"Saving...\t"<< flush; 
+
     for (int c=0; c<=_qmax-_qmin; c++){
       _curr_ermg.loadFrom( _ed_rep[c] );
       _curr_ermg.outFile( ofile, g, odir );
@@ -469,8 +439,7 @@ namespace ermg {
 	  <<" ICL:\n"<<_ed_rep[c]._icl<<endl;
     }  
     fout.close(); 
-    if (!_silent)
-      cout<<"done"<<endl; 
+
   }
 
 }

@@ -71,35 +71,34 @@ class Matrix {
   } *link_;
  
   struct s_data *newLink(size_t size_ ){
-    LOGInFct( std::cout );
+
     struct s_data *link = new struct s_data;
     link -> matrix_ = new double [size_];
     link -> ref_    = 1;
-    LOGMSG( 4, std::cout, "New link", (size_t) link->matrix_ );
 
-    LOGOutFct( std::cout );
+
+
     return(link);
   }
 
   struct s_data *newLink( double *ptr_ ){
-    LOGInFct( std::cout );
+
     struct s_data *link = new struct s_data;
     link -> matrix_ = ptr_;
     link -> ref_    = 1;
-    LOGMSG( 4, std::cout, "New link", (size_t) link->matrix_ );
-    LOGOutFct( std::cout );
+
     return(link);
   }
 
   void deleteLink( ){
-    LOGInFct( std::cout );
+
     if ( (-- (link_-> ref_)) == 0 ) {
-      LOGMSG( 4, std::cout, "Freeing link", (size_t) link_->matrix_ );
+
       delete [] (link_->matrix_);
       delete link_;
       link_ = 0;
     }
-    LOGOutFct( std::cout );
+
   }
 
   void fillData( double a ) {     
@@ -152,7 +151,7 @@ class Matrix {
     //!              computations  
     Matrix( const size_t row, const size_t col, double *ptr, 
 	    const bool copy=true ) {
-      LOGInFct( std::cout );
+
       row_ = row; col_ = col;
       if ( copy ) {
 	link_ = newLink(row_*col_) ;
@@ -160,7 +159,7 @@ class Matrix {
       } else {
 	link_ = newLink( ptr );
       }
-      LOGOutFct( std::cout );
+
     }
     //! \brief Constructor -  The returned matrix (rowcol,col) or 
     //!        (row, rowcol) is filled with the vector V
@@ -177,7 +176,7 @@ class Matrix {
       double *tmp_tab = 0;
 
 
-      LOGInFct( std::cout );
+
       const double *tabV = V.getData();
 
       if( V.row_ == 1 ) {
@@ -201,9 +200,7 @@ class Matrix {
 	}
 	link_ = newLink( tmp_tab );
       }
-      else
-	LOGMSG( 1, std::cout, not_dims_match, "" );
-      LOGOutFct( std::cout );
+
     }
 
 
@@ -217,31 +214,29 @@ class Matrix {
     //! \endcode
     //! See getCopy() to duplicate Matrix objects.
     Matrix( const Matrix& A ) {
-      LOGInFct( std::cout );
       row_ = A.row_;
       col_ = A.col_;
       A.link_-> ref_++;
       link_ = A.link_;
-      LOGOutFct( std::cout );
     }
 
     //! Destructor
     ~Matrix() {
-      LOGInFct( std::cout );
+
       deleteLink();
-      LOGOutFct( std::cout );
+
     }
 
     //! Assignement operator
     Matrix& operator = ( const Matrix& A) {
-      LOGInFct( std::cout );
+
       row_ = A.row_;
       col_ = A.col_;
       deleteLink();
 
       link_ = A.link_;
       link_ -> ref_++;
-      LOGOutFct( std::cout );
+
 
       return(*this);
     }
@@ -329,12 +324,11 @@ class Matrix {
     //! \brief Type cast operator from a matrix (1,1) to a scalar.
     inline operator double(void) {
       double a=0;
-      LOGInFct( std::cout );
+
       if ((row_ == 1) && (col_ == 1)) {
 	a = link_->matrix_[0];
-      } else 
-	LOGMSG( 1, std::cout, not_scalar, "" );
-      LOGOutFct( std::cout );
+      }
+
       return( a );
     }
 
@@ -606,7 +600,7 @@ Matrix  Matrix::operator+(const Matrix& A) {
     }
   }
   else {
-    LOGMSG( 1, std::cout, not_same_dims, "" );
+
   }
   return ( tmp );
 
@@ -639,7 +633,7 @@ Matrix inline Matrix::operator-(const Matrix& A) {
     }
   }
   else {
-    LOGMSG( 1, std::cout, not_same_dims, "" );
+
   }
   return ( tmp );
 
@@ -665,7 +659,7 @@ Matrix inline Matrix::operator*(const Matrix& A) {
   double *_tab    = link_->matrix_;
   double *A_tab   = A.link_->matrix_;
  
-  LOGInFct( std::cout );
+
 
   if( EQUAL_COL_ROW( A ) ) {
 
@@ -701,9 +695,9 @@ Matrix inline Matrix::operator*(const Matrix& A) {
 #endif
   }
   else {
-    LOGMSG( 1, std::cout, not_dims_match, "" );
+
   }
-  LOGOutFct( std::cout );
+
   return ( tmp );
 }
 
@@ -728,16 +722,16 @@ Matrix inline Matrix::operator|(const Matrix& A) {
   double *_tab    = link_->matrix_;
   double *A_tab   = A.link_->matrix_;
 
-  LOGInFct( std::cout );
+
   if( EQUAL_DIM( A ) ) {
     for (size_t i=0; i < row_*col_; i++) {
       tmp_tab[i] = _tab[i] * A_tab[i]; 
     }
   }
   else {
-    LOGMSG( 1, std::cout, not_dims_match, "" );
+
   }
-  LOGOutFct( std::cout );
+
 
   return ( tmp );
 }
@@ -754,7 +748,7 @@ Matrix inline Matrix::t() {
   double *tmp_tab = tmp.link_->matrix_; 
   double *_tab    = link_->matrix_;
 
-  LOGInFct( std::cout );
+
 
   for (size_t j=0; j < t_col; j++) {
     for (size_t i=0; i < t_row; i++) {
@@ -762,7 +756,6 @@ Matrix inline Matrix::t() {
     }
   }
 
-  LOGOutFct( std::cout );
 
   return ( tmp );
 }
@@ -842,10 +835,10 @@ Matrix inline Matrix::Compare( const char *str_,   const Matrix& A,
       }
     }
     else {
-      LOGMSG( 1, std::cout, not_implemented, "" );
+
     }
   } else {
-    LOGMSG( 1, std::cout, not_same_dims, "" );
+
   }
   Matrix tmp( col_, row_, tmp_mat,  false);
   return ( tmp );
@@ -868,7 +861,7 @@ Matrix inline Matrix::Compare( const char *str_,   const double test_val,
     }
   }
   else {
-    LOGMSG( 1, std::cout, not_implemented, "" );
+
   }
   Matrix tmp( col_, row_, tmp_mat, false);
   return ( tmp );
@@ -939,7 +932,7 @@ Matrix inline Matrix::RemoveRowCol( const size_t ii, const size_t jj) {
 //   Friend functions and operators
 // 
 Matrix inline operator+(const double a, const Matrix& A ) {
-  LOGInFct ( std::cout );
+
   size_t row =   A.getRow();
   size_t col =   A.getCol();
   double *tab = new double [ row * col ];
@@ -950,12 +943,12 @@ Matrix inline operator+(const double a, const Matrix& A ) {
   }
   Matrix tmp(row, col, tab, false);
 
-  LOGOutFct( std::cout );
+
   return ( tmp );
 }  
 
 Matrix inline operator-(const double a, const Matrix& A ) {
-  LOGInFct ( std::cout );
+
   size_t row =   A.getRow();
   size_t col =   A.getCol();
   double *tab = new double [ row * col ];
@@ -966,12 +959,12 @@ Matrix inline operator-(const double a, const Matrix& A ) {
   }
   Matrix tmp(row, col, tab, false);
 
-  LOGOutFct( std::cout );
+
   return( tmp );
 }
 
 Matrix inline operator*(const double a, const Matrix& A ) {
-  LOGInFct ( std::cout );
+
   size_t row =   A.getRow();
   size_t col =   A.getCol();
   double *tab = new double [ row * col ];
@@ -982,13 +975,13 @@ Matrix inline operator*(const double a, const Matrix& A ) {
   }
   Matrix tmp(row, col, tab, false);
 
-  LOGOutFct( std::cout );
+
   return( tmp );
 }
 
 Matrix inline max( const double x, Matrix &A) {
 
-  LOGInFct( std::cout );
+
   size_t row =   A.getRow();
   size_t col =   A.getCol();
   double *tab = new double [ row * col ];
@@ -999,14 +992,14 @@ Matrix inline max( const double x, Matrix &A) {
   }
   Matrix tmp(row, col, tab, false);
 
-  LOGOutFct( std::cout );
+
 
   return ( tmp );
 }
 
 Matrix inline max( const Matrix &A, const double x) {
 
-  LOGInFct( std::cout );
+
 
   size_t row =   A.getRow();
   size_t col =   A.getCol();
@@ -1018,14 +1011,14 @@ Matrix inline max( const Matrix &A, const double x) {
   }
   Matrix tmp(row, col, tab, false);
 
-  LOGOutFct( std::cout );
+
 
   return ( tmp );
 }
 
 Matrix inline max( const Matrix &A, Matrix &B ) {
 
-  LOGInFct( std::cout );
+
 
   size_t row =   A.getRow();
   size_t col =   A.getCol();
@@ -1038,18 +1031,18 @@ Matrix inline max( const Matrix &A, Matrix &B ) {
       tab[i] = MAX( matA_[i], matB_[i]);
     }
   } else {
-    LOGMSG( 1, std::cout, not_same_dims, "" );
+
   }
 
   Matrix tmp(row, col, tab, false );
-  LOGOutFct( std::cout );
+
   return ( tmp );
 }
 
 
 Matrix inline min(  const double x, const Matrix &A) {
 
-  LOGInFct( std::cout );
+
   size_t row =   A.getRow();
   size_t col =   A.getCol();
   double *tab = new double [ row * col ];
@@ -1060,14 +1053,14 @@ Matrix inline min(  const double x, const Matrix &A) {
   }
   Matrix tmp(row, col, tab, false);
 
-  LOGOutFct( std::cout );
+
 
   return ( tmp );
 }
 
 Matrix inline min( const Matrix &A, const double x) {
 
-  LOGInFct( std::cout );
+
 
   size_t row =   A.getRow();
   size_t col =   A.getCol();
@@ -1079,14 +1072,14 @@ Matrix inline min( const Matrix &A, const double x) {
   }
   Matrix tmp(row, col, tab, false);
 
-  LOGOutFct( std::cout );
+
 
   return ( tmp );
 }
 
 Matrix inline min( const Matrix &A, const Matrix &B ) {
 
-  LOGInFct( std::cout );
+
 
   size_t row =   A.getRow();
   size_t col =   A.getCol();
@@ -1099,12 +1092,12 @@ Matrix inline min( const Matrix &A, const Matrix &B ) {
       tab[i] = MIN( matA_[i], matB_[i]);
     }
   } else {
-    LOGMSG( 1, std::cout, not_same_dims, "" );
+
   }
 
   Matrix tmp(row, col, tab, false);
 
-  LOGOutFct( std::cout );
+
 
   return ( tmp );
 }
@@ -1123,7 +1116,7 @@ Matrix inline sum( const Matrix &A, const char *dim  ) {
 
   if ( (str.compare("row") != 0) && (str.compare("col") != 0) && 
        (str.compare("all") != 0)) {
-    LOGMSG( 1, std::cout, "Bad dim value: ", dim );
+
   }
   if ( str.compare("col") == 0 ) {
     tab = new double [ col ];
@@ -1220,7 +1213,7 @@ Matrix inline Normalize( const Matrix &A, const char *str_ ) {
 	sum = sum + matA[j*row+i];
       }
       if (sum < DBL_MIN ) {    
-	LOGMSG( 1, std::cout, "Row sum is zero i =", i );
+
       }
       for (size_t j=0; j < col; j++) {
 	tab[j*row+i] = matA[j*row+i] / sum;
@@ -1233,14 +1226,14 @@ Matrix inline Normalize( const Matrix &A, const char *str_ ) {
 	sum = sum + matA[j*row+i];
       }
       if (sum < DBL_MIN ) {    
-	LOGMSG( 1, std::cout, "Col sum is zero i =", "" );
+
       }
       for (size_t i=0; i < row; i++) {
 	tab[j*row+i] = matA[j*row+i] / sum;
       }
     }
   } else {
-    LOGMSG( 1, std::cout, not_implemented, "" );
+
   }
 
   Matrix tmp(row, col, tab, false);
@@ -1283,7 +1276,7 @@ Matrix inline RestrictSum( const Matrix& A, const char *str_ ) {
       }
     }
   } else {
-    LOGMSG( 1, std::cout, not_implemented, "" );
+
   }
 
   Matrix tmp(row, col, tab, false);
@@ -1300,7 +1293,7 @@ Matrix inline RestrictProd(const Matrix& B, const Matrix& A) {
   const double *A_tab   =  A.getData();
   double *tmp_tab =  new double [ row_ * A.getCol() ];
  
-  LOGInFct( std::cout );
+
 
   if( col_ == A.getRow() )  {
 
@@ -1325,12 +1318,12 @@ Matrix inline RestrictProd(const Matrix& B, const Matrix& A) {
 	}
       }
     } else {
-      LOGMSG( 1, std::cout, not_square_matrix, "" );
+
     }
   } else {
-    LOGMSG( 1, std::cout, not_dims_match, "" );
+
   }
-  LOGOutFct( std::cout );
+
   Matrix tmp(row_,  A.getCol(), tmp_tab, false);
   return ( tmp );
 }

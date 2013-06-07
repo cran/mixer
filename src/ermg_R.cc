@@ -68,8 +68,6 @@ extern "C" {
       tosym = true;
     }
     GraphReader gr(tosym, *loop);
-    if (!(*silent))
-      printf("Loading graph...\t");
     
 
     // loading graph from *m
@@ -85,12 +83,9 @@ extern "C" {
 	n=sprintf(buf2, "%d", m[i+1]);
 	graph->addLink(buf1, buf2);
       }
-      if (!(*silent))
-	printf("done");
       
       if (graph->nbVertices() < *qmax){
-	printf("Error: Q max is greater than (then set to) the number of vertices");
-       	exit(0);
+
       }    
       
       
@@ -170,7 +165,7 @@ extern "C" {
            delete em_method;
       
     } catch (GraphReaderException &gre) {
-      printf("Exception : %s\n",gre.what());
+
     }
   }
 }

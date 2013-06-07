@@ -38,7 +38,6 @@ C
           LINE(I:I) = ' '
     2 CONTINUE
 C
-      WRITE ( LOUT, 2000 ) IFMT, LINE(1:LLL)
  2000 FORMAT ( /1X, A  /1X, A )
 C
       IF (N .LE. 0) RETURN
@@ -55,25 +54,25 @@ C
       IF (NDIGIT .LE. 4) THEN
          DO 10 K1 = 1, N, 10
             K2 = MIN0(N,K1+9)
-            WRITE(LOUT,1000) K1,K2,(IX(I),I=K1,K2)
+
    10    CONTINUE
 C
       ELSE IF (NDIGIT .LE. 6) THEN
          DO 30 K1 = 1, N, 7
             K2 = MIN0(N,K1+6)
-            WRITE(LOUT,1001) K1,K2,(IX(I),I=K1,K2)
+
    30    CONTINUE
 C
       ELSE IF (NDIGIT .LE. 10) THEN
          DO 50 K1 = 1, N, 5
             K2 = MIN0(N,K1+4)
-            WRITE(LOUT,1002) K1,K2,(IX(I),I=K1,K2)
+
    50    CONTINUE
 C
       ELSE
          DO 70 K1 = 1, N, 3
             K2 = MIN0(N,K1+2)
-            WRITE(LOUT,1003) K1,K2,(IX(I),I=K1,K2)
+
    70    CONTINUE
       END IF
 C
@@ -86,29 +85,29 @@ C
       IF (NDIGIT .LE. 4) THEN
          DO 90 K1 = 1, N, 20
             K2 = MIN0(N,K1+19)
-            WRITE(LOUT,1000) K1,K2,(IX(I),I=K1,K2)
+
    90    CONTINUE
 C
       ELSE IF (NDIGIT .LE. 6) THEN
          DO 110 K1 = 1, N, 15
             K2 = MIN0(N,K1+14)
-            WRITE(LOUT,1001) K1,K2,(IX(I),I=K1,K2)
+
   110    CONTINUE
 C
       ELSE IF (NDIGIT .LE. 10) THEN
          DO 130 K1 = 1, N, 10
             K2 = MIN0(N,K1+9)
-            WRITE(LOUT,1002) K1,K2,(IX(I),I=K1,K2)
+
   130    CONTINUE
 C
       ELSE
          DO 150 K1 = 1, N, 7
             K2 = MIN0(N,K1+6)
-            WRITE(LOUT,1003) K1,K2,(IX(I),I=K1,K2)
+
   150    CONTINUE
       END IF
       END IF
-      WRITE (LOUT,1004)
+
 C
  1000 FORMAT(1X,I4,' - ',I4,':',20(1X,I5))
  1001 FORMAT(1X,I4,' - ',I4,':',15(1X,I7))

@@ -46,10 +46,6 @@ namespace ermg {
     while (idit != _linkmap.end()) {
       previd = idit->first;
       assert(idit->second.size()>=0);
-      /*
-	cerr << " Processsing " << idit->first << "\t( " << _idmap[idit->first] 
-	<< ")\t size = " << idit->second.size() << endl;
-      */
       res[idit->first].reserve(idit->second.size());
       idit->second.sort();
       unique_copy(idit->second.begin(),idit->second.end(),
@@ -79,10 +75,6 @@ namespace ermg {
     idit=tmplinkmap.begin();
     while (idit != tmplinkmap.end()) {
       assert(idit->second.size()>=0);      
-      /*
-	cerr << " Processsing " << idit->first << "\t( " << _idmap[idit->first] 
-	<< ")\t size = " << idit->second.size() << endl;
-      */
       for (list<int>::iterator listit=idit->second.begin(); listit!=idit->second.end(); listit++){      
 	res[*listit].push_back(idit->first);
       }      
@@ -194,8 +186,6 @@ namespace ermg {
     string line;
     gstream.open(vfile.c_str());
     if (!gstream.good()){
-      cerr<<"Unable to open file "<<vfile<<endl;
-      exit(1);
     }
     while (!gstream.eof()) {
       getline(gstream,line); 
@@ -207,8 +197,6 @@ namespace ermg {
 	  string cl;
 	  linestream>>cl;
 	  if (!cl.length()){
-	    cerr<<"Error: the line format \"id class\" is not respected in "<<vfile<<endl;
-	    exit(1);
 	  }
 	  int icl=atoi(cl.c_str());
 	  classlabelmap[tmplabel]=icl;
@@ -230,15 +218,11 @@ namespace ermg {
       if (classlabelmap.find(it->first)!=classlabelmap.end()){
 	rearranged_labelmap[it->first]=i;
 	rearranged_vec[it->second]=i;
-// 	cerr<<"rearranged_labelmap["<<it->first<<"]="<<i<<endl;
-// 	cerr<<"rearranged_vec["<<it->second<<"]="<<i<<endl;
 	i++;
       }
       else{
 	rearranged_labelmap[it->first]=j;
 	rearranged_vec[it->second]=j;
-// 	cerr<<"rearranged_labelmap["<<it->first<<"]="<<j<<endl;
-// 	cerr<<"rearranged_vec["<<it->second<<"]="<<j<<endl;
 	j++;
       }
     }
@@ -266,18 +250,6 @@ namespace ermg {
 	
     }
     _linkmap=rearranged_linkmap;
-
-//     cerr<<"AFTER"<<endl;
-//     for (int i=0;i<int(_linkmap.size());i++){
-//       cerr<<i<<" ";
-//       for (list<int>::iterator it=_linkmap[i].begin();
-// 	   it!=_linkmap[i].end();
-// 	   it++){
-// 	cerr<<*it<<" ";
-//       }
-//       cerr<<endl;
-//     }
-      
       
 
     return vclass;

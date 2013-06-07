@@ -27,7 +27,7 @@
 #
 #    Gplot.vertex.label: draw vertex labels. 
 #
-#    Gplot.edge:         draw edges
+#    Gplot.edgeMIXER:    draw edges
 #                        Main steps:
 #                        + identify edges to be drawn.
 #                        + remove loops
@@ -35,7 +35,7 @@
 #
 #  Utilities:
 #  ---------
-#   + draw.edge:        (used by Gplot.edge) draw edges/arrows
+#   + draw.edge:        (used by Gplot.edgeMIXER) draw edges/arrows
 #   + isolate.vertices: (used by Gplot.network) tag isolate vertices (TRUE)
 #
 #  To improve:
@@ -539,7 +539,7 @@ Gplot.vertex.label <-function( graph,
   return ( graph )
 }
 
-Gplot.edge <-function( graph,
+Gplot.edgeMIXER <-function( graph,
                        col=1, lty=1, lwd=0,
                        arrow.draw=TRUE, arrow.cex=2, curved=FALSE,
                        loop.draw=FALSE, loop.arrow = TRUE, loop.cex=1,
@@ -631,10 +631,10 @@ Gplot.edge <-function( graph,
    for(i in (1:n)[graph$network$use]) {   
      for(j in (1:n)[graph$network$use]) {
        if( graph$mat[i,j] ){        # Edge exists
-         px0 <- c(px0,as.real(x[i]))  # Store endpoint coordinates
-         py0 <- c(py0,as.real(y[i]))
-         px1 <- c(px1,as.real(x[j]))
-         py1 <- c(py1,as.real(y[j]))
+         px0 <- c(px0,as.double(x[i]))  # Store endpoint coordinates
+         py0 <- c(py0,as.double(y[i]))
+         px1 <- c(px1,as.double(x[j]))
+         py1 <- c(py1,as.double(y[j]))
          e.toff <-c ( e.toff, v.radius[i] ) # Store endpoint offsets
          e.hoff <-c ( e.hoff, v.radius[j] )
          e.col  <-c ( e.col , col[i,j])     # Store other edge attributes

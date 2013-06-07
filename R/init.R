@@ -1,9 +1,9 @@
 .onLoad <- function(libname, pkgname) {
-  cat("\n")
-  cat("      'mixer' package\n"  )
-  cat("      SSB group (http://ssbgroup.fr)\n")
-  cat("      mixer page (http://ssbgroup.fr/mixnet/mixer.html)\n")
-  cat("\n")
+  #packageStartupMessage("\n")
+  #packageStartupMessage("      'mixer' package\n"  )
+  #packageStartupMessage("      SSB group (http://ssbgroup.fr)\n")
+  #packageStartupMessage("      mixer page (http://ssbgroup.fr/mixnet/mixer.html)\n")
+  #packageStartupMessage("\n")
     
   setSeed(  Sys.getpid() )
 }

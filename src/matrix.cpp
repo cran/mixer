@@ -44,37 +44,31 @@ void Matrix::print( const char *name, size_t first_indexes ) {
  
   double *mat_ = link_->matrix_;
   
-  std::cout << str_ctxt 
-	    << std::endl;
-  std::cout << str_ctxt 
-	    <<  "Matrix " << name << "(" << row_ << "," << col_ << ")" 
-	    << std::endl;
   
   size_t max_row = MIN( row_, first_indexes);
   size_t max_col = MIN( col_, first_indexes);
   
   for (size_t i=0; i < max_row; i++) {
-    std::cout << str_ctxt <<  "row " << i << " > ";
+
     
     for (size_t j=0; j < max_col; j++) {
-      std::cout << mat_[j*row_+i] << " ";
+
     }
     if( col_ > max_col ) {
-      std::cout << " ... "  << mat_[(col_-1)*row_+i];
+
     }
-    std::cout << std::endl;
+
   }
   if( row_ > max_row ) {
-    std::cout << str_ctxt << "  :" << std::endl;
-    std::cout << str_ctxt <<  "row " << row_-1 << " > ";
+
     
     for (size_t j=0; j < max_col; j++) {
-      std::cout << mat_[j*row_+(row_-1)] << " ";
+
     }
     if( col_ > max_col ) {
-      std::cout << " ... "  << mat_[(col_-1)*row_+(row_-1)];
+
     }
-    std::cout << std::endl;
+
   }
 }
 //! \endcond
