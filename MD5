@@ -1,7 +1,7 @@
 d791728a073bc009b4ffaf00b7599855 *COPYING
-d9d502f1a6da3f35d8fb192a30b3b79c *DESCRIPTION
+a977f031d0cd2517e755a2c5ad4d406b *DESCRIPTION
 3b0febef2c1415e54057937f782ab8cb *NAMESPACE
-5fac51999f828e8cc1a3b42866aacbc9 *NEWS
+9d6d8febddf8801f13d0926b9704107d *NEWS
 ca0f447fb544f4a11f98ae30e85f4471 *R/Gplot-internals.R
 d6124abbfe9f5ebc201bcf11f27c0858 *R/Gplot.R
 0cbe9eb9123d4a7073269e05e8a3dfc2 *R/bayesianMixer.R
@@ -11,6 +11,7 @@ d5c3d9b6ba94badc0b88a122d1b902e2 *R/init.R
 8ce8b670ee74e638856839c23b7b2d08 *data/blog.rda
 413aa0e0d925b5dc350c8e35b2d39ffb *data/macaque.rda
 404c5e6250b145c35d13e2156b0a65d4 *inst/CITATION
+a8af415db2d70af1ceb55e5a3e126f89 *inst/COPYRIGHTS
 192048f256c210d40387c2a7e21f6f73 *inst/spm/club_foot.spm
 9474cdb636a8a8366fe0e72e9b1ddb67 *inst/spm/macaque_matrix.spm
 44538ce4112ee8cf98392d93289e2a8e *man/a_mixer.Rd
@@ -21,7 +22,6 @@ d5c3d9b6ba94badc0b88a122d1b902e2 *R/init.R
 51e5c130d20eb7366a90154017d83438 *man/e_setSeed.Rd
 143a099070a1854adbae09bb4cd885cd *man/t_blog.Rd
 ba49ee9faf9552c79977214bed62d223 *man/u_macaque.Rd
-00051ad39b7fa004c380ce204656b87f *mixer-Ex.R
 f502d0b72328c5ed1865d25d275468e1 *src/BandMemMatrix.h
 2f8695bcbe2dd1c2b0a91f90fd18d682 *src/Barycenters.cc
 66c9c41aacab310a2b3af7aa09e99afe *src/Barycenters.h
@@ -112,7 +112,7 @@ ba31552c7d9f39068b367e2ae720d0e3 *src/init_ermg_R.cc
 c13cff309fbbeadcd5ac1dc2b9aaba1e *src/ivout.f
 3f1eb1f37708f4b0e2c7eb1f57e357ea *src/lsame.f
 ece11e86922aa7ed5485623a93d69d77 *src/matrix.cpp
-d921d79d14a2d36450f6482e8358643b *src/matrix.h
+d07fdbe4fc522f3fa241da501a68ce82 *src/matrix.h
 6f920f5e0634d6e84768e7f3af23768d *src/second.f
 c28c229a8f46064816edae952fc5bb09 *src/stat.h
 67b36684922f48639583a9d62ecba9f9 *src/util.h

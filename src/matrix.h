@@ -172,7 +172,7 @@ class Matrix {
     //!             In "false" case do not use the pointer for other 
     //!              computations  
     Matrix( const size_t rowcol, const Matrix &V, 
-	    const char *transpose=false ) {
+	    const char *transpose="false" ) {
       double *tmp_tab = 0;
 
 
@@ -299,7 +299,7 @@ class Matrix {
     //!               dim="all", the sum is computed on all matrix element 
     //! 
     //! \return Return a sum vector. 
-    friend inline Matrix sum( const Matrix& A, const char *dim="all" );
+    friend inline Matrix sum( const Matrix& A, const char *dim );
 
     //! \brief Compute the log() of A matrix elements. 
     //!        X(i,j) = log( A(i,j) ); 0 <= i < row, 0 <= j < col 
@@ -1102,7 +1102,7 @@ Matrix inline min( const Matrix &A, const Matrix &B ) {
   return ( tmp );
 }
 
-Matrix inline sum( const Matrix &A, const char *dim  ) {
+inline Matrix sum( const Matrix& A, const char *dim="all" ) {
 
   size_t row =   A.getRow();
   size_t col =   A.getCol();

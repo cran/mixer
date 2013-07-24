@@ -1,4 +1,8 @@
 NEWS/Changelog
+
+1.7	(2013-07-23)
+    +	Correct problem with Lapack licence and copyright
+
 1.6	(2013-06-07)
     +	Remove C and Fortran functions that could cause R to terminate. Use packageStartupMessage for startup functions
 
