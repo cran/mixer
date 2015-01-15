@@ -22,6 +22,9 @@
 #include <limits>
 #include <unistd.h>
 #include <time.h>
+#include <R.h>
+#include <Rmath.h>
+
 using namespace std;
 
 
@@ -208,7 +211,9 @@ namespace ermg {
 	    if ( (_imove_usedtomerge[kselect+1] == _imove[kselect+1])
 		 &&(_imove_usedtosplit[kselect-1] == _imove[kselect-1]) ){
 	      //2.3// or random drawing
-	      double tmprand = double(rand())/double(RAND_MAX)*(kmax-c-2);
+	      //double tmprand = double(rand())/double(RAND_MAX)*(kmax-c-2);
+	      double tmprand = unif_rand()*(kmax-c-2);
+	      
 	      int krand=1;
 	      while (krand<tmprand){
 		krand++;

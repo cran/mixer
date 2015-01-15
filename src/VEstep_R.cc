@@ -33,7 +33,8 @@ void VEstep_(
 	    )
 {
 
-
+   GetRNGstate(); // Initialize random number generator
+  
   // Construct matrices
   Matrix X  ( N, N, X_     , true ); // Do not deallocate X_, D_, ..., CstMat_ 
   Matrix D  ( Q, Q, D_     , true ); 
@@ -102,4 +103,6 @@ void VEstep_(
     TauOld.copyData( tau_ );
  
   nit=i-1;
+
+  void PutRNGstate(); // send RNG status to R
 }

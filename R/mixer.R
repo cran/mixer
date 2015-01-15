@@ -605,9 +605,10 @@ getConnectedNodes<-function( x ) {
 # Set the seed of random functions of C/C++ part
 ##############################################################
 setSeed <- function( seed=1 ) {
-  invisible( .C("srand_stdlib",
-                   as.integer(seed)
-            ) )
+  #invisible( .C("srand_stdlib",
+  #                 as.integer(seed)
+  #              ) )
+  set.seed(seed)
 }
 
 ##############################################################

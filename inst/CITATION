@@ -1,5 +1,5 @@
 ## -*- R -*-
-citHeader("To cite the R package 'mixer' in publications use:")
+citHeader("To cite the R package 'mixer':")
 
 citEntry(entry  = "Article",
          title  = "A mixture model for random graphs",
@@ -8,28 +8,26 @@ citEntry(entry  = "Article",
          number= "2",
          pages= "151-171",
          year= "2008",
-
-        author = personList(
-          person(first="Jean-Jacques", last="Daudin"),
-          person(first="Franck", last="Picard"),
-          person(first="Stephane", last="Robin")
+        author = c(
+          person(given="Jean-Jacques", family="Daudin"),
+          person(given="Franck", family="Picard"),
+          person(given="Stephane", family="Robin")
           ),
 
-        textVersion = "Jean-Jacques Daudin, Franck Picard and Stephane Robin June (2008),
-A mixture model for random graphs. Statistics and Computing, 18, 2, 151--171."
+        textVersion = "Jean-Jacques Daudin, Franck Picard and Stephane Robin  (2008),
+A mixture model for random graphs. Statistics and Computing, 18, 2, 151-171."
           )
 
-citEntry(entry  = "Article",
+citEntry(entry  ="Article",
          title  = "Fast online graph clustering via Erdos-Renyi mixture.",
          journal= "Pattern Recognition",
          volume= "41",
          pages= "3592-3599",
          year= "2008",
-
-        author = personList(
-          person(first="Hugo", last="Zanghi"),
-          person(first="Christophe", last="Ambroise"),
-          person(first="Vincent", last="Miele")
+         author = c(
+          person(given="Hugo", family="Zanghi"),
+          person(given="Christophe", family="Ambroise"),
+          person(given="Vincent", family="Miele")
           ),
 
         textVersion = "Hugo Zanghi, Christophe Ambroise and Vincent Miele (2008),
@@ -38,33 +36,37 @@ Pattern Recognition, 41, 3592-3599."
           )
 
 
-citEntry(entry  = "unpublished",
-         title  = "Strategies for Online Inference of Network Mixture",
-         year= "2008",
-         note   = "Research publication",
-         journal= "arXiv.org",
-        author = personList(
-          person(first="Hugo", last="Zanghi"),
-          person(first="Franck", last="Picard"),
-          person(first="Vincent", last="Miele"),
-          person(first="Christophe", last="Ambroise")
+citEntry(entry  =  "Article",
+         title  = "Strategies for online inference of model-based clustering in large and growing networks",
+         year= "2010",
+         journal= "Annals of Applied Statistics",
+         volume="4", 
+         number="2",
+         pages="687-714",
+
+        author = c(
+          person(given="Hugo", family="Zanghi"),
+          person(given="Franck", family="Picard"),
+          person(given="Vincent", family="Miele"),
+          person(given="Christophe", family="Ambroise")
           ),
 
-        textVersion = "Hugo Zanghi, Franck Picard, Vincent Miele, and Christophe Ambroise (2008),
-Strategies for Online Inference of Network Mixture}, unpublished, http://arxiv.org/abs/0910.2034v1"
+        textVersion = "Hugo Zanghi, Franck Picard, Vincent Miele and Christophe Ambroise (2010), Strategies for online inference of model-based clustering in large and growing networks. Annals of Applied Statistics, 4, 2, 687-714."
          )
 
-citEntry(entry  = "unpublished",
-         title  = "Bayesian methods for graph clustering",
-         year= "2008",
-         note   = "SSB Research Report",
+citEntry(entry  = "Article",
+         title  = "Variational Bayesian inference and complexity control for stochastic block models",
+         journal = "Statistical Modelling, SAGE Publications",
+         year= "2012",
+         volume="12",
+         number="1",
+         pages="93-115",
         author = personList(
-          person(first="Pierre", last="Latouche"),
-          person(first="Etienne", last="Birmele"),
-          person(first="Christophe", last="Ambroise")
+          person(given="Pierre", family="Latouche"),
+          person(given="Etienne", family="Birmelé"),
+          person(given="Christophe", family="Ambroise")
           ),
 
-        textVersion = "Pierre Latouche,  Etienne Birmele, and Christophe Ambroise (2008),
-Bayesian methods for graph clustering, http://genome.jouy.inra.fr/ssb/preprint/SSB-RR-17.bayesianMixNet.pdf"
+        textVersion = "Pierre Latouche,  Etienne Birmelé and Christophe Ambroise (2012), Variational Bayesian inference and complexity control for stochastic block models. Statistical Modelling, SAGE Publications, 12, 1, 93-115."
           )
 

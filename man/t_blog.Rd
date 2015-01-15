@@ -4,7 +4,7 @@
 \title{French Political Blogosphere network}
 \description{
 French Political Blogosphere network dataset consists of a single day snapshot
-of over 1,100 political blogs automatically extracted the 14 october 2006 and manually classified
+of over 200 political blogs automatically extracted the 14 october 2006 and manually classified
 by the ''Observatoire Presidentielle'' project. This project is the result of a collaboration
 between RTGI SAS and Exalead and aims at analyzing the French presidential campaign on the web.
 

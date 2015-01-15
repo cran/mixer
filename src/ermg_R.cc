@@ -33,13 +33,14 @@ using namespace std;
 #include <ModelImprover.h>
 #include <Emd.h>
 #include <GraphReader.h>
-
+#include <R.h>
+#include <Rmath.h>
 
 using namespace ermg;
 
 extern "C" {
-  void srand_stdlib( unsigned int* seed ) { srand(*seed); 
-}
+  // void srand_stdlib( unsigned int* seed ) { srand(*seed); 
+  //}
 
   void main_ermg(int*    symmetrize, // param for main_ermg function
 		 int*    loop,
@@ -61,7 +62,10 @@ extern "C" {
 		 int*    nodes, // nbr of nodes of the graph
 		 int*    m,	// the list of edges
 		 double* res){
-    
+
+    GetRNGstate(); // Initialize random number generator
+        
+
     // GRAPH
     bool tosym = *symmetrize;
     if (*undirected){
@@ -167,6 +171,8 @@ extern "C" {
     } catch (GraphReaderException &gre) {
 
     }
+    PutRNGstate(); // send RNG status to R
   }
+  
 }
  

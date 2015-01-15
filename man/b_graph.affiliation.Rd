@@ -2,7 +2,7 @@
 \alias{graph.affiliation}
 \title{Simulation of an Affiliation Graph}
 
-\description{Simulate an affiliation Graph with a given number of
+\description{Simulate an affiliation network with a given number of
   clusters, specific class proportions and within/between connection
   probabilities.
 }
@@ -12,13 +12,13 @@ graph.affiliation( n=100, alphaVect=c(1/2,1/2), lambda=0.7,
 }
 
 \arguments{
-  \item{n}{number of nodes of the simulated Graph.}
+  \item{n}{number of nodes of the simulated network.}
   \item{alphaVect}{vector of cluster proportions.}
   \item{lambda}{within-cluster probability of edge.}
   \item{epsilon}{between-clusters probability of edge.}
   \item{directed}{\code{TRUE} for directed graphs.}
  }
-\details{\code{graph.affiliation} simulates a simple Erdos-Renyi
+\details{\code{graph.affiliation} simulates a simple Erdös-Rényi
   Mixture of Graph  model, using the same within-cluster edge probability
   for all clusters and a unique between-cluster edge probability.
 }

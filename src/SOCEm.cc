@@ -20,6 +20,8 @@
 
 #include <limits>
 #include <SOCEm.h>
+#include <R.h>
+#include <Rmath.h>
 
 using namespace std;
 namespace ermg {
@@ -58,7 +60,11 @@ namespace ermg {
       
     // drawing    
     int qstar = 0;
-    double c=_sumsTau_qi[0], tmprand = double(rand())/double(RAND_MAX), bound=tmprand*sumval;
+    double c=_sumsTau_qi[0],  tmprand = unif_rand(), bound=tmprand*sumval;
+
+    // double tmprand = double(rand())/double(RAND_MAX),
+    
+    
     while (c<bound){
       qstar++;
       c+=_sumsTau_qi[qstar];

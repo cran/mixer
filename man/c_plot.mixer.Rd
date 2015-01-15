@@ -3,8 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Plot of mixer object }
 \description{
-\code{plot.mixer} can display five kinds of figure: Integrated Classification
-Criterion curve, the adjacency matrix map, the degree distribution histogram, the
+\code{plot.mixer} can display five kinds of figure: model selection criterion curve, the adjacency matrix map, the degree distribution histogram, the
 connectivity matrix graph and the adjacency matrix graph. By default the four
 first plots are displayed.}
 

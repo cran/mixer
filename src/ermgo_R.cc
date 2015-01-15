@@ -35,6 +35,8 @@ using namespace std;
 #include <OEm.h>
 #include <SOCEm.h>
 #include <GraphReader.h>
+#include <R.h>
+#include <Rmath.h>
 
 
 using namespace ermg;
@@ -56,6 +58,9 @@ extern "C" {
 		  int*    m,	        // the list of edges
 		  double* res){
 
+    
+    GetRNGstate(); // Initialize random number generator
+   
     // GRAPH
     bool tosym = true;
     GraphReader gr(tosym, *loop);
@@ -177,6 +182,9 @@ extern "C" {
     } catch (GraphReaderException &gre) {
 
     }
+     PutRNGstate(); // send RNG status to R
   }
+
+ 
 
 }

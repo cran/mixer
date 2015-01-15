@@ -1,5 +1,12 @@
 NEWS/Changelog
 
+1.8	(2015-01-15)
+    +   Update references
+    +   Correct mistakes and improve the help
+    +   Remove calls to rand C function. Replace with unif_rand
+    +   Correct the use of the seed in C functions : use PutRNGstate and GetRNGstate. Different results can now be obtained when running various instances of mixer in parallel
+    
+
 1.7	(2013-07-23)
     +	Correct problem with Lapack licence and copyright
 

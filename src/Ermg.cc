@@ -27,6 +27,8 @@
 #include <iterator>
 #include <limits>
 #include <set>
+#include <R.h>
+#include <Rmath.h>
 
 using namespace std;
 
@@ -380,7 +382,8 @@ namespace ermg {
     if (exaequo_min.size()>0){
       exaequo_min.push_back(min_c);    
       int nbexaequo = exaequo_min.size();
-      double tmprand = double(rand())/double(RAND_MAX)*nbexaequo;
+      // double tmprand = double(rand())/double(RAND_MAX)*nbexaequo;
+      double tmprand = unif_rand()*nbexaequo;
       int c=1;
       while (c<tmprand){
 	c++;
@@ -430,7 +433,8 @@ namespace ermg {
     double tmpcoeff;
     double step = double(_kmeans_concerned_vertices.size())/double(_kmeans_nbclass);
     for (int c=0; c<_kmeans_nbclass; c++){
-      tmpcoeff = double(rand())/double(RAND_MAX);
+      //tmpcoeff = double(rand())/double(RAND_MAX);
+      tmpcoeff = unif_rand();
       selected[c] = _kmeans_concerned_vertices[ int( (c+tmpcoeff)*step ) ];
     }
 #ifdef VERBOSE      
@@ -620,7 +624,8 @@ namespace ermg {
       else{
 	// in case of ex-aequo
 	if (exaequo_min.size()>1){
-	  double tmprand = double(rand())/double(RAND_MAX)*(exaequo_min.size()/2);
+	  //double tmprand = double(rand())/double(RAND_MAX)*(exaequo_min.size()/2);
+	  double tmprand = unif_rand()*(exaequo_min.size()/2);
 	  int c=1;
 	  while (c<tmprand){
 	    c++;

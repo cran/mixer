@@ -3,7 +3,7 @@
 \title{MIXtures of Erdos-Renyi random graphs}
 \description{
 Estimate the parameters, the hidden class variables, as well as the
-number of classes \code{q} of a MIXture of Erdos Renyi random graphs.
+number of classes \code{q} of a MIXture of Erdös Rényi random graphs.
 The estimation is performed for binary graphs
 (edges are assumed to be drawn from Bernoulli distributions). 
 }
@@ -32,19 +32,12 @@ nbiter=10, fpnbiter=5, improve=FALSE, verbose=TRUE)
   \item{verbose}{display warning messages (default: \code{TRUE}).}
 }
 \details{
-  \code{mixer} implements the Erdos-Renyi mixture model for graphs
-  (called MixNet) which has been proposed by Daudin et. al (2008)
-  with an associated EM  estimation algorithm.
-  The MixNet model is well suited to capture the structure of
-  a network and in particular to detect communities.
+  \code{mixer} implements inference methods for the MixNet  model (sometimes referred to as Erdös-Rényi mixture model for graphs) which is described in Daudin et. al (2008). Please note that the MixNet model is a special case of binary stochastic block models (Nowicki and Snijders, 2001). The inference allows to uncover clusters of vertices sharing homogeneous connection profiles. In particular, the package can be used to look for specific clusters, namely  communities, where nodes of a  community are more likely to connect to nodes of the same community.
+ 
 
-  MixNet must not to be confused with Exponential Random Graph Models for 
-  Network Data (ERGM) which considers distributions ensuing from the
-  exponential family to model the edge distribution.
-  
-  There exists a strong connection between Mixnet and block clustering.
-  Block clustering searches for homogeneous blocks in a data matrix by
-  simultaneous  clustering of rows and columns. 
+  MixNet must not  be confused with Exponential Random Graph Models for 
+  network data (ERGM).
+
   
   The \code{mixer} package implements three different estimation strategies
   which were developed to deal with directed and undirected graphs: 
@@ -57,7 +50,7 @@ nbiter=10, fpnbiter=5, improve=FALSE, verbose=TRUE)
       is able to deal with bigger networks but can produce biased
     estimates.}
     \item{bayesian}{implements the method described in Latouche
-      et. al (2008).}
+      et. al (2012).}
     
   }
 
@@ -100,25 +93,21 @@ nbiter=10, fpnbiter=5, improve=FALSE, verbose=TRUE)
   color knowing the graph structure).}
 }
 \references{
-Jean-Jacques Daudin, Franck Picard and Stephane Robin 
-June (2008), \emph{A mixture model for random graphs.}
-Statistics and Computing, 18, 2, 151--171.
+Jean-Jacques Daudin, Franck Picard and Stephane Robin  (2008),
+A mixture model for random graphs. Statistics and Computing, 18, 2, 151-171.
 
 Hugo Zanghi, Christophe Ambroise and Vincent Miele (2008),
-\emph{Fast online graph clustering via Erdos-Renyi mixture.}
+Fast online graph clustering via Erdös-Rényi mixture.
 Pattern Recognition, 41, 3592-3599.
 
 
-Hugo Zanghi, Franck Picard, Vincent Miele, and Christophe Ambroise (2008),
-\emph{Strategies for Online Inference of Network Mixture},\cr
-\url{http://arxiv.org/abs/0910.2034v1}
+Hugo Zanghi, Franck Picard, Vincent Miele and Christophe Ambroise (2010), Strategies for online inference of model-based clustering in large and growing networks. Annals of Applied Statistics, 4, 2, 687-714.
 
-Pierre Latouche,  Etienne Birmele, and Christophe Ambroise (2008),
-\emph{Bayesian methods for graph clustering},\cr
-\url{http://genome.jouy.inra.fr/ssb/preprint/SSB-RR-17.bayesianMixNet.pdf}
+
+Pierre Latouche,  Etienne Birmelé and Christophe Ambroise (2012), Variational Bayesian inference and complexity control for stochastic block models. Statistical Modelling, SAGE Publications, 12, 1, 93-115.
 
 Vincent Miele, MixNet C++ package,\cr
-\url{http://stat.genopole.cnrs.fr/sg/software/mixer/}.
+\url{http://stat.genopole.cnrs.fr/logiciels/mixnet}.
 
 \code{mixer-dev} tool: see \url{http://ssbgroup.fr/mixnet/mixer.html}
 }
@@ -132,13 +121,32 @@ graph.affiliation(n=100,c(1/3,1/3,1/3),0.8,0.2)->g
 mixer(g$x,qmin=2,qmax=6)->xout
 \dontrun{plot(xout)}
 
+##
+
 graph.affiliation(n=50,c(1/3,1/3,1/3),0.8,0.2)->g
 mixer(g$x,qmin=2,qmax=5, method="bayesian")->xout
 \dontrun{plot(xout)}
 
+##
+
 data(blog)
+
+## set the seed to replicate results
+setSeed(777)
 mixer(x=blog$links,qmin=2,qmax=12)->xout
 \dontrun{plot(xout)}
+
+##
+
+## get best run
+m <- getModel(xout)
+
+## get run for q=5
+m <- getModel(xout, q=5)
+
+
+
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

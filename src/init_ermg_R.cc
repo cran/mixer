@@ -33,6 +33,10 @@ using namespace std;
 #include <Emd.h>
 #include <GraphReader.h>
 
+#include <R.h>
+#include <Rmath.h>
+
+
 
 using namespace ermg;
 
@@ -49,6 +53,8 @@ extern "C" {
 		 int*    nbrNodes,
 		 int*    m,	// the list of edges
 		 double* tau) {
+
+    GetRNGstate(); // Initialize random number generator
     
     int                 q = *q_p; 
     int     improvenbiter = 0;
@@ -166,6 +172,8 @@ extern "C" {
     } catch (GraphReaderException &gre) {
 
     }
+     PutRNGstate(); // send RNG status to R
   }
+ 
 }
  

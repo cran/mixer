@@ -140,7 +140,7 @@ namespace ermg {
     
   }
 
-  void Graph::shuffle()
+  /* void Graph::shuffle()
   {
     vector<int> shuffle_vec(_idmap.size());
     for (int index=0;index<int(shuffle_vec.size());index++)
@@ -176,7 +176,7 @@ namespace ermg {
 	
     }
     _linkmap=shuffled_linkmap;
-  } 
+    } */
 
 
   vector<int> Graph::reorder(const string& vfile)

@@ -18,6 +18,9 @@
  */
 
 #include <ModelDesigner.h>
+#include <R.h>
+#include <Rmath.h>
+
 using namespace std;
 
 
@@ -46,7 +49,8 @@ namespace ermg {
 
     vector<int> randomclasses(_curr_ermg.nbVertices(), -1);
     for (int i=0; i<n_init; i++)
-      randomclasses[i] = int(double(rand())/double(RAND_MAX)*_q);
+      //randomclasses[i] = int(double(rand())/double(RAND_MAX)*_q);
+      randomclasses[i] = int( unif_rand() *_q);
       
     load(randomclasses);
   }
