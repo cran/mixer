@@ -1,20 +1,20 @@
 Package: mixer
 Type: Package
-Title: Random graph clustering
-Version: 1.8
-Date: 2015-01-15
-Authors@R: c(person("Christophe", "Ambroise", role="aut"), person("Gilles", "Grasseau", role="aut"), person("Mark", "Hoebeke", role="aut"), person("Pierre", "Latouche", role=c("aut", "cre"), email="pierre.latouche@univ-paris1.fr"), person("Vincent", "Miele", role="aut"), person("Franck", "Picard", role="aut"), person("LAPACK authors", role = "aut", comment = "copyrights apply to src/*.f"))
+Title: Random Graph Clustering
+Version: 1.9
+Date: 2019-02-20
+Authors@R: c(person("Christophe", "Ambroise", role="aut"), person("Gilles", "Grasseau", role="aut"), person("Mark", "Hoebeke", role="aut"), person("Pierre", "Latouche", role=c("aut", "cre"), email="pierre.latouche@univ-paris1.fr"), person("Vincent", "Miele", role="aut"), person("Franck", "Picard", role="aut"), person("Alexander", "Smith", role="aut"), person("LAPACK authors", role = "aut", comment = "copyrights apply to src/*.f"), person("Laboratoire Statistique & Génome", role = "cph"),  person("Carter T. Butts", role = "cph")) 
 Maintainer: Pierre Latouche <pierre.latouche@univ-paris1.fr>
-Description: Routines for the analysis (unsupervised clustering) of
-        networks using MIXtures of Erdos-Renyi random graphs
 URL: http://ssbgroup.fr/mixnet/mixer.html, http://ssbgroup.fr
 License: GPL (>= 2)
 Copyright: file inst/COPYRIGHTS for src/*.f obtained from LAPACK
 Depends: R (>= 2.5.0), methods
+Description: Estimates the parameters, the clusters, as well as
+     the number of clusters of a (binary) stochastic block model (J.-J Daudin, F. Picard, S. Robin (2008) <doi:10.1007/s11222-007-9046-7>).
 Encoding: UTF-8
-Packaged: 2015-01-15 17:14:28 UTC; pierrelatouche
+Packaged: 2018-02-20 17:03:44 UTC; pierrelatouche
 Repository: CRAN
-Date/Publication: 2015-01-15 21:06:21
+Date/Publication: 2018-02-20 19:11:05 UTC
 NeedsCompilation: yes
 Author: Christophe Ambroise [aut],
   Gilles Grasseau [aut],
@@ -22,4 +22,7 @@ Author: Christophe Ambroise [aut],
   Pierre Latouche [aut, cre],
   Vincent Miele [aut],
   Franck Picard [aut],
-  LAPACK authors [aut] (copyrights apply to src/*.f)
+  Alexander Smith [aut],
+  LAPACK authors [aut] (copyrights apply to src/*.f),
+  Laboratoire Statistique & Génome [cph],
+  Carter T. Butts [cph]

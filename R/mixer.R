@@ -1,5 +1,5 @@
 mixer<-function( x, qmin=2, qmax=NULL, method="variational",
-                 directed=NULL, nbiter=10, fpnbiter=5, improve=FALSE, verbose=TRUE )
+                 directed=NULL, nbiter=10, fpnbiter=5, improve=FALSE, verbose=TRUE)
   {
 
 
@@ -138,7 +138,7 @@ mixer<-function( x, qmin=2, qmax=NULL, method="variational",
   ##Chose the method for the parameter estimation
   if (method=="bayesian"){
     bout <- VariationalBayes(m, qmin, qmax, nbiter, fpnbiter,
-                             emeps, fpeps, directed )
+                             emeps, fpeps, directed, 1, 1, 1)
   }
   else if (method=="classification"){
     xout <- .C("main_ermgo",

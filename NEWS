@@ -1,5 +1,15 @@
 NEWS/Changelog
 
+1.9	(2018-02-20)
+    +   Register native routines and to disable symbol search
+    +   Define properly global functions or variables
+    +   The bayesian method now returns the estimated posterior parameters (Dirichlet and Beta)
+    +   Package name : title case
+    +   Change the package description in the DESCRIPTION file
+    +   In all the package files : the model considered is now referred to as the (binary) stochastic block model
+    +   Import of standard R functions
+    +   Correct compilation flags in Makevar
+
 1.8	(2015-01-15)
     +   Update references
     +   Correct mistakes and improve the help

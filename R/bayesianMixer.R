@@ -92,7 +92,7 @@ lowerBound<-function(tau, pCts0, pCts, directed=FALSE){
 # Variational Bayes #
 #####################
 VariationalBayes <-
-  function(m, qmin, qmax, nbiter, fpnbiter, emeps, fpeps, directed=FALSE) {
+  function(m, qmin, qmax, nbiter, fpnbiter, emeps, fpeps, directed=FALSE, n0, eta0, zeta0) {
 
   ## Edge matrix to Adjacency matrix
   N <- max(m)
@@ -140,9 +140,9 @@ VariationalBayes <-
     maxcut <- log(.Machine$double.xmax) - log(Q)
     mincut <- log(.Machine$double.xmin)
 
-    pCts0$n    <- rep(1, Q)
-    pCts0$eta  <- matrix(rep(1, Q^2), Q, Q)
-    pCts0$zeta <- matrix(rep(1, Q^2), Q, Q)
+    pCts0$n    <- rep(n0, Q)
+    pCts0$eta  <- matrix(rep(eta0, Q^2), Q, Q)
+    pCts0$zeta <- matrix(rep(zeta0, Q^2), Q, Q)
 
     # tau0 initialization
     
@@ -210,6 +210,9 @@ VariationalBayes <-
     y[[i.res]]$criterion <- max( as.numeric(as.matrix(l)) ) 
     y[[i.res]]$alphas    <- pCts$n / sum( pCts$n ) 
     y[[i.res]]$Pis       <- pCts$eta / (pCts$eta+pCts$zeta)
+    y[[i.res]]$a <- pCts$n
+    y[[i.res]]$eta <- pCts$eta
+    y[[i.res]]$zeta <- pCts$zeta
     y[[i.res]]$Taus      <- t(tau)
     i.res <- i.res+1
   }

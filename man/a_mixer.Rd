@@ -2,10 +2,8 @@
 \alias{mixer}
 \title{MIXtures of Erdos-Renyi random graphs}
 \description{
-Estimate the parameters, the hidden class variables, as well as the
-number of classes \code{q} of a MIXture of Erdös Rényi random graphs.
-The estimation is performed for binary graphs
-(edges are assumed to be drawn from Bernoulli distributions). 
+Estimate the parameters, the clusters, as well as the
+number of clusters \code{q} of a (binary) stochastic block model. 
 }
 \usage{
 mixer( x, qmin=2, qmax=NULL, method="variational", directed = NULL,
@@ -89,6 +87,9 @@ nbiter=10, fpnbiter=5, improve=FALSE, verbose=TRUE)
   \item{output[[i]]$alphas}{vector of proportion, whose length is the number
   of component.}
   \item{output[[i]]$Pis}{class connectivity matrix.}
+  \item{output[[i]]$a}{vector of Dirichlet parameters for the (approximated) posterior distribution of the class proportions.}
+  \item{output[[i]]$eta}{matrix of Beta parameters for the (approximated) posterior distribution of the connectivity matrix.}
+  \item{output[[i]]$zeta}{matrix of Beta parameters for the (approximated) posterior distribution of the connectivity matrix.}
   \item{output[[i]]$Taus}{matrix of posterior probabilities (of the hidden
   color knowing the graph structure).}
 }
@@ -97,17 +98,17 @@ Jean-Jacques Daudin, Franck Picard and Stephane Robin  (2008),
 A mixture model for random graphs. Statistics and Computing, 18, 2, 151-171.
 
 Hugo Zanghi, Christophe Ambroise and Vincent Miele (2008),
-Fast online graph clustering via Erdös-Rényi mixture.
+Fast online graph clustering via Erd??s-R??nyi mixture.
 Pattern Recognition, 41, 3592-3599.
 
 
 Hugo Zanghi, Franck Picard, Vincent Miele and Christophe Ambroise (2010), Strategies for online inference of model-based clustering in large and growing networks. Annals of Applied Statistics, 4, 2, 687-714.
 
 
-Pierre Latouche,  Etienne Birmelé and Christophe Ambroise (2012), Variational Bayesian inference and complexity control for stochastic block models. Statistical Modelling, SAGE Publications, 12, 1, 93-115.
+Pierre Latouche,  Etienne Birmel?? and Christophe Ambroise (2012), Variational Bayesian inference and complexity control for stochastic block models. Statistical Modelling, SAGE Publications, 12, 1, 93-115.
 
 Vincent Miele, MixNet C++ package,\cr
-\url{http://stat.genopole.cnrs.fr/logiciels/mixnet}.
+\url{http://www.math-evry.cnrs.fr/logiciels/mixnet}.
 
 \code{mixer-dev} tool: see \url{http://ssbgroup.fr/mixnet/mixer.html}
 }

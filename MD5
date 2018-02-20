@@ -1,12 +1,12 @@
 d791728a073bc009b4ffaf00b7599855 *COPYING
-ea8b6102b46eb99db88629086da8d919 *DESCRIPTION
-63d06dbdb27e6df96a06cf71f016ab04 *NAMESPACE
-b1dc77f380be3895dabc43ab1bc70700 *NEWS
+7536ada567cb03a5992bfba307b553f2 *DESCRIPTION
+735911548000750663ad85ad8507a8a8 *NAMESPACE
+035bf83b5ba5ad0f99e2a52e1d79563c *NEWS
 ca0f447fb544f4a11f98ae30e85f4471 *R/Gplot-internals.R
 d6124abbfe9f5ebc201bcf11f27c0858 *R/Gplot.R
-0cbe9eb9123d4a7073269e05e8a3dfc2 *R/bayesianMixer.R
+f4012a50359b007cacb5adf8cc14ced8 *R/bayesianMixer.R
 da32fb721d97e9482332882d12ca5db6 *R/init.R
-7543f6f3adf8b05435f06ff6212819c3 *R/mixer.R
+fd6e6b6b83b3fef6cd83ff177ac358f2 *R/mixer.R
 500c30f20baeaefa3ed9e86ed26e0b68 *R/spmgraph.R
 8ce8b670ee74e638856839c23b7b2d08 *data/blog.rda
 413aa0e0d925b5dc350c8e35b2d39ffb *data/macaque.rda
@@ -14,7 +14,7 @@ da32fb721d97e9482332882d12ca5db6 *R/init.R
 a8af415db2d70af1ceb55e5a3e126f89 *inst/COPYRIGHTS
 192048f256c210d40387c2a7e21f6f73 *inst/spm/club_foot.spm
 9474cdb636a8a8366fe0e72e9b1ddb67 *inst/spm/macaque_matrix.spm
-22e1187ba9c8d94b10abe8ec6804e44d *man/a_mixer.Rd
+7552f7ba04afce360878c4001d7471bb *man/a_mixer.Rd
 65e3b5b75d6d6bf3f13d7e72a79af9e5 *man/b_graph.affiliation.Rd
 189b60715e2043ac497546428cb5f1d5 *man/c_plot.mixer.Rd
 b6f04e979a5802fa506d6ed9f21087b9 *man/d_getModel.Rd
@@ -38,7 +38,7 @@ b047db41473b1b7dbabedd2af9f01d8e *src/Ermg.h
 a2e3e30fd70ede55bc641b8ff1832339 *src/Graph.h
 1d99f9a46348fb4864abf4dbe6b038a5 *src/GraphReader.cc
 c4bbf0bbc521b7ae56189d7994aea5c7 *src/GraphReader.h
-8e7085d710c499496e88eb08dac049a9 *src/Makevars
+0044dd1521e0bd567d050080d38cd2c9 *src/Makevars
 2b2446f6d7a1940849ad7f42d43aa7d0 *src/ModelDesigner.cc
 d7efe708bccf7c00aaa3e62131da2415 *src/ModelDesigner.h
 7037608148936841692a4d443537acc1 *src/ModelImprover.cc
@@ -113,6 +113,7 @@ c13cff309fbbeadcd5ac1dc2b9aaba1e *src/ivout.f
 3f1eb1f37708f4b0e2c7eb1f57e357ea *src/lsame.f
 ece11e86922aa7ed5485623a93d69d77 *src/matrix.cpp
 d07fdbe4fc522f3fa241da501a68ce82 *src/matrix.h
+30f3a71e5196e61cfc7de224d3a6b46f *src/mixer_init.c
 6f920f5e0634d6e84768e7f3af23768d *src/second.f
 c28c229a8f46064816edae952fc5bb09 *src/stat.h
 67b36684922f48639583a9d62ecba9f9 *src/util.h

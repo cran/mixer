@@ -1,3 +1,10 @@
+importFrom("grDevices", "rgb")
+importFrom("graphics", "abline", "hist", "lines", "par", "plot",
+             "points", "polygon", "rect", "strheight", "strwidth",
+             "text")
+importFrom("stats", "approx", "dpois", "kmeans", "quantile", "rbinom",
+             "rmultinom")
+
 export(mixer)
 export(graph.affiliation)
 export(setSeed)
@@ -6,5 +13,4 @@ export(getModel.mixer)
 import(methods)
 S3method(plot, mixer)
 S3method(getModel, mixer)
-useDynLib(mixer)
-
+useDynLib(mixer, .registration = TRUE)
